@@ -268,22 +268,210 @@
             color: white;
         }
         
-        .growth-indicator {
-            display: inline-block;
+        .bird-count-cell {
+            background-color: #f0f8ff;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .info-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .info-note i {
+            margin-left: 8px;
+        }
+        
+        /* استایل مخصوص بخش وزن‌گیری هفتگی */
+        .weight-schedule {
+            background: #e8f4fd;
+            border: 2px dashed #2196f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .weight-schedule h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .weight-schedule h3 i {
+            font-size: 1.3em;
+        }
+        
+        .weight-days {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .weight-day-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .weight-day-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+            border-color: #2196f3;
+        }
+        
+        .weight-day-card.active {
+            border-color: #2196f3;
+            background: #e3f2fd;
+        }
+        
+        .weight-day-card .day {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        
+        .weight-day-card .date {
+            font-size: 0.85em;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        .weight-day-card .status {
+            font-size: 0.8em;
             padding: 3px 8px;
             border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: 500;
+            background: #ff9800;
+            color: white;
+            display: inline-block;
         }
         
-        .growth-up {
+        .weight-day-card .status.done {
             background: #4caf50;
-            color: white;
         }
         
-        .growth-down {
-            background: #f44336;
+        .weight-day-card .weight-badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background: #ff4757;
             color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .weight-input-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+            direction: rtl;
+        }
+        
+        .weight-input-popup.active {
+            display: block;
+        }
+        
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .popup-overlay.active {
+            display: block;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .popup-header h3 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .close-popup {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .popup-body {
+            text-align: center;
+        }
+        
+        .popup-body .day-info {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .popup-body input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .popup-body button {
+            width: 100%;
+            padding: 15px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .popup-body button:hover {
+            background: #1976d2;
         }
         
         @media print {
@@ -334,11 +522,12 @@
                 <h2>📝 اطلاعات اولیه گله</h2>
                 <div class="basic-info-grid">
                     <div class="basic-info-item">
-                        <label>📅 تاریخ ورود جوجه:</label>
-                        <input type="date" id="entryDate" onchange="updateFlockInfo()">
+                        <label>📅 تاریخ ورود جوجه (شمسی):</label>
+                        <input type="text" id="entryDate" placeholder="مثال: ۱۴۰۲/۱۲/۰۱" value="۱۴۰۲/۱۲/۰۱" onchange="updateFlockInfo()">
+                        <small style="color: #666;">تاریخ را به صورت شمسی وارد کنید</small>
                     </div>
                     <div class="basic-info-item">
-                        <label>🐔 تعداد جوجه ریزی:</label>
+                        <label>🐔 تعداد جوجه ریزی (روز اول):</label>
                         <input type="number" id="initialBirds" value="10000" min="1" onchange="updateFlockInfo()">
                     </div>
                     <div class="basic-info-item">
@@ -352,10 +541,27 @@
                 </div>
             </div>
 
+            <!-- بخش جدید: برنامه وزن‌گیری هفتگی -->
+            <div class="weight-schedule no-print">
+                <h3>
+                    <i>⚖️</i>
+                    برنامه وزن‌گیری هفتگی (هر ۷ روز یکبار)
+                </h3>
+                <p style="color: #666; margin-bottom: 15px;">
+                    روی هر روز کلیک کنید تا وزن آن روز را ثبت یا ویرایش کنید
+                </p>
+                <div class="weight-days" id="weightDaysContainer">
+                    <!-- کارت‌های روزهای وزن‌گیری با JavaScript پر می‌شوند -->
+                </div>
+            </div>
+
             <!-- فرم ثبت روزانه -->
             <div class="daily-log no-print">
                 <div class="daily-log-header">
                     <h2>📋 ثبت وقایع روزانه</h2>
+                    <div class="info-note">
+                        <i>ℹ️</i> تعداد پرنده روز اول از "تعداد جوجه ریزی" محاسبه می‌شود. روزهای بعد به صورت خودکار از تلفات کسر می‌شود.
+                    </div>
                     <div class="action-buttons">
                         <button class="action-btn btn-save" onclick="saveToLocalStorage()">💾 ذخیره اطلاعات</button>
                         <button class="action-btn btn-print" onclick="window.print()">🖨️ پرینت گزارش</button>
@@ -366,13 +572,16 @@
 
                 <!-- فرم افزودن ردیف جدید -->
                 <div class="add-row-form">
-                    <input type="number" id="newDay" placeholder="روز" value="1">
-                    <input type="number" id="newMortality" placeholder="تلفات" value="0">
-                    <input type="number" id="newFeed" placeholder="دان مصرفی (کیلوگرم)" value="0">
-                    <input type="number" id="newWeight" placeholder="وزن نمونه (گرم)" value="0">
+                    <input type="number" id="newDay" placeholder="روز" value="1" min="1">
+                    <input type="number" id="newMortality" placeholder="تلفات" value="0" min="0">
+                    <input type="number" id="newFeed" placeholder="دان مصرفی (کیلوگرم)" value="0" min="0" step="0.1">
+                    <input type="number" id="newWeight" placeholder="وزن نمونه (گرم)" value="0" min="0" readonly style="background:#f5f5f5; cursor:not-allowed;">
                     <input type="text" id="newNotes" placeholder="توضیحات">
                     <button onclick="addDailyRow()">➕ افزودن</button>
                 </div>
+                <small style="color: #f44336; display: block; margin-top: -10px; margin-bottom: 10px;">
+                    * وزن نمونه فقط از طریق برنامه وزن‌گیری هفتگی قابل ثبت است
+                </small>
 
                 <!-- جدول ثبت روزانه -->
                 <div class="table-container">
@@ -380,7 +589,8 @@
                         <thead>
                             <tr>
                                 <th>روز</th>
-                                <th>تاریخ</th>
+                                <th>تاریخ (شمسی)</th>
+                                <th>تعداد پرنده</th>
                                 <th>تلفات</th>
                                 <th>دان مصرفی (کیلوگرم)</th>
                                 <th>وزن نمونه (گرم)</th>
@@ -421,12 +631,28 @@
         </div>
     </div>
 
+    <!-- پاپ‌آپ ثبت وزن -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closeWeightPopup()"></div>
+    <div class="weight-input-popup" id="weightPopup">
+        <div class="popup-header">
+            <h3>⚖️ ثبت وزن هفتگی</h3>
+            <button class="close-popup" onclick="closeWeightPopup()">×</button>
+        </div>
+        <div class="popup-body">
+            <div class="day-info" id="popupDayInfo">روز ۷</div>
+            <input type="number" id="popupWeight" placeholder="وزن نمونه (گرم)" min="0" step="10">
+            <button onclick="saveWeightFromPopup()">ثبت وزن</button>
+        </div>
+    </div>
+
     <footer class="no-print">
         <p>تمامی حقوق محفوظ است © ۱۴۰۴</p>
     </footer>
 
     <!-- اضافه کردن کتابخانه Chart.js برای نمودار -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- کتابخانه تبدیل تاریخ شمسی -->
+    <script src="https://cdn.jsdelivr.net/gh/jalaali/jalaali-js/dist/jalaali.min.js"></script>
     
     <script>
         // ================ متغیرهای سراسری ================
@@ -435,57 +661,253 @@
         
         // اطلاعات اولیه
         let flockInfo = {
-            entryDate: '',
+            entryDate: '۱۴۰۲/۱۲/۰۱',  // تاریخ شمسی
             initialBirds: 10000,
             flockName: 'سالن ۱',
             breed: 'راس ۳۰۸'
         };
 
-        // ================ توابع کمکی ================
+        // ================ توابع تبدیل تاریخ شمسی ================
         
-        // تبدیل تاریخ شمسی به میلادی (برای ذخیره‌سازی)
-        function toGregorianDate(persianDate) {
-            if (!persianDate) return new Date().toISOString().split('T')[0];
-            return persianDate;
+        function toJalali(date) {
+            if (!date) return '';
+            
+            // اگر تاریخ میلادی است تبدیل کن
+            if (date.includes('-')) {
+                const [year, month, day] = date.split('-').map(Number);
+                const jDate = jalaali.toJalaali(year, month, day);
+                return `${jDate.jy}/${jDate.jm.toString().padStart(2, '0')}/${jDate.jd.toString().padStart(2, '0')}`;
+            }
+            
+            // اگر تاریخ شمسی است، همان را برگردان
+            return date;
         }
 
-        // محاسبه سن بر اساس تاریخ ورود
+        function toGregorian(jalaliDate) {
+            if (!jalaliDate) {
+                const today = new Date();
+                return today.toISOString().split('T')[0];
+            }
+            
+            // اگر تاریخ به فرمت شمسی است
+            if (jalaliDate.includes('/')) {
+                const [jy, jm, jd] = jalaliDate.split('/').map(Number);
+                const gDate = jalaali.toGregorian(jy, jm, jd);
+                return `${gDate.gy}-${gDate.gm.toString().padStart(2, '0')}-${gDate.gd.toString().padStart(2, '0')}`;
+            }
+            
+            // اگر تاریخ میلادی است، همان را برگردان
+            return jalaliDate;
+        }
+
+        function getCurrentJalaliDate() {
+            const today = new Date();
+            const jDate = jalaali.toJalaali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            return `${jDate.jy}/${jDate.jm.toString().padStart(2, '0')}/${jDate.jd.toString().padStart(2, '0')}`;
+        }
+
+        // محاسبه سن بر اساس تاریخ شمسی
         function calculateAge() {
             if (!flockInfo.entryDate) return 0;
             
-            const entryDate = new Date(flockInfo.entryDate);
+            try {
+                // تبدیل تاریخ شمسی به میلادی
+                const [jy, jm, jd] = flockInfo.entryDate.split('/').map(Number);
+                const gDate = jalaali.toGregorian(jy, jm, jd);
+                const entryDate = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+                
+                const today = new Date();
+                const diffTime = Math.abs(today - entryDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays;
+            } catch (e) {
+                console.error('خطا در محاسبه سن:', e);
+                return 0;
+            }
+        }
+
+        // ================ توابع مدیریت وزن‌گیری هفتگی ================
+        
+        function getWeightDays() {
+            const weightDays = [];
+            // روزهای 1, 7, 14, 21, 28, 35, 42, 49
+            for (let i = 1; i <= 49; i += 7) {
+                if (i === 1) continue; // روز اول اختیاری است
+                weightDays.push(i);
+            }
+            return weightDays;
+        }
+
+        function renderWeightSchedule() {
+            const container = document.getElementById('weightDaysContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const weightDays = getWeightDays();
             const today = new Date();
-            const diffTime = Math.abs(today - entryDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
+            const currentJalali = getCurrentJalaliDate();
+            
+            weightDays.forEach(day => {
+                // محاسبه تاریخ تقریبی برای این روز
+                let dayDate = '';
+                if (flockInfo.entryDate) {
+                    try {
+                        const [jy, jm, jd] = flockInfo.entryDate.split('/').map(Number);
+                        const gDate = jalaali.toGregorian(jy, jm, jd);
+                        const entryDate = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+                        const targetDate = new Date(entryDate);
+                        targetDate.setDate(entryDate.getDate() + (day - 1));
+                        
+                        const jTarget = jalaali.toJalaali(
+                            targetDate.getFullYear(),
+                            targetDate.getMonth() + 1,
+                            targetDate.getDate()
+                        );
+                        dayDate = `${jTarget.jy}/${jTarget.jm.toString().padStart(2, '0')}/${jTarget.jd.toString().padStart(2, '0')}`;
+                    } catch (e) {
+                        dayDate = 'تاریخ نامشخص';
+                    }
+                }
+                
+                // بررسی اینکه آیا برای این روز وزن ثبت شده
+                const weightRecord = dailyData.find(d => d.day === day);
+                const hasWeight = weightRecord && weightRecord.weight > 0;
+                
+                const card = document.createElement('div');
+                card.className = `weight-day-card ${hasWeight ? 'active' : ''}`;
+                card.onclick = () => openWeightPopup(day, dayDate);
+                
+                card.innerHTML = `
+                    <div class="day">روز ${day}</div>
+                    <div class="date">${dayDate}</div>
+                    <div class="status ${hasWeight ? 'done' : ''}">${hasWeight ? 'ثبت شده' : 'ثبت نشده'}</div>
+                    ${hasWeight ? `<div class="weight-badge">${weightRecord.weight}</div>` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function openWeightPopup(day, date) {
+            const popup = document.getElementById('weightPopup');
+            const overlay = document.getElementById('popupOverlay');
+            const dayInfo = document.getElementById('popupDayInfo');
+            const weightInput = document.getElementById('popupWeight');
+            
+            // پیدا کردن وزن قبلی اگر وجود داشته باشد
+            const existingRecord = dailyData.find(d => d.day === day);
+            
+            dayInfo.innerHTML = `روز ${day} - ${date}`;
+            weightInput.value = existingRecord ? existingRecord.weight : '';
+            
+            // ذخیره روز در attribute برای استفاده در save
+            popup.setAttribute('data-day', day);
+            
+            popup.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function closeWeightPopup() {
+            document.getElementById('weightPopup').classList.remove('active');
+            document.getElementById('popupOverlay').classList.remove('active');
+        }
+
+        function saveWeightFromPopup() {
+            const day = parseInt(document.getElementById('weightPopup').getAttribute('data-day'));
+            const weight = parseFloat(document.getElementById('popupWeight').value);
+            
+            if (!weight || weight <= 0) {
+                alert('لطفاً وزن معتبر وارد کنید');
+                return;
+            }
+            
+            // پیدا کردن یا ایجاد رکورد برای این روز
+            let record = dailyData.find(d => d.day === day);
+            
+            if (record) {
+                // به‌روزرسانی وزن
+                record.weight = weight;
+            } else {
+                // ایجاد رکورد جدید
+                const [jy, jm, jd] = flockInfo.entryDate.split('/').map(Number);
+                const gDate = jalaali.toGregorian(jy, jm, jd);
+                const entryDate = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+                const targetDate = new Date(entryDate);
+                targetDate.setDate(entryDate.getDate() + (day - 1));
+                
+                const jTarget = jalaali.toJalaali(
+                    targetDate.getFullYear(),
+                    targetDate.getMonth() + 1,
+                    targetDate.getDate()
+                );
+                const jalaliDate = `${jTarget.jy}/${jTarget.jm.toString().padStart(2, '0')}/${jTarget.jd.toString().padStart(2, '0')}`;
+                
+                dailyData.push({
+                    day: day,
+                    date: jalaliDate,
+                    mortality: 0,
+                    feed: 0,
+                    weight: weight,
+                    notes: 'وزن‌گیری هفتگی'
+                });
+            }
+            
+            // مرتب‌سازی و رندر مجدد
+            dailyData.sort((a, b) => a.day - b.day);
+            renderDailyTable();
+            renderWeightSchedule();
+            closeWeightPopup();
+            saveToLocalStorage();
         }
 
         // ================ توابع مدیریت اطلاعات گله ================
         
         function updateFlockInfo() {
-            flockInfo.entryDate = document.getElementById('entryDate')?.value || '';
+            flockInfo.entryDate = document.getElementById('entryDate')?.value || '۱۴۰۲/۱۲/۰۱';
             flockInfo.initialBirds = parseFloat(document.getElementById('initialBirds')?.value) || 10000;
             flockInfo.flockName = document.getElementById('flockName')?.value || 'سالن ۱';
             flockInfo.breed = document.getElementById('breed')?.value || 'راس ۳۰۸';
             
+            renderWeightSchedule();
             updateAllCalculations();
             saveToLocalStorage();
+        }
+
+        // ================ تابع محاسبه تعداد پرنده در هر روز ================
+        
+        function calculateBirdCountForDay(day) {
+            if (day === 1) {
+                return flockInfo.initialBirds;
+            }
+            
+            let totalMortality = 0;
+            const sortedData = [...dailyData].sort((a, b) => a.day - b.day);
+            
+            for (let i = 0; i < sortedData.length; i++) {
+                if (sortedData[i].day < day) {
+                    totalMortality += sortedData[i].mortality || 0;
+                }
+            }
+            
+            return flockInfo.initialBirds - totalMortality;
         }
 
         // ================ توابع مدیریت داده‌های روزانه ================
         
         function loadSampleData() {
-            // داده‌های نمونه برای نمایش
+            // داده‌های نمونه با تاریخ شمسی
             dailyData = [
-                { day: 1, date: '2024-01-01', mortality: 15, feed: 120, weight: 180, notes: 'شروع خوب' },
-                { day: 7, date: '2024-01-07', mortality: 8, feed: 280, weight: 420, notes: '' },
-                { day: 14, date: '2024-01-14', mortality: 5, feed: 550, weight: 890, notes: '' },
-                { day: 21, date: '2024-01-21', mortality: 4, feed: 820, weight: 1450, notes: '' },
-                { day: 28, date: '2024-01-28', mortality: 3, feed: 1100, weight: 2100, notes: '' },
-                { day: 35, date: '2024-02-04', mortality: 2, feed: 1350, weight: 2750, notes: '' },
-                { day: 42, date: '2024-02-11', mortality: 2, feed: 1500, weight: 3200, notes: 'آماده فروش' }
+                { day: 1, date: '۱۴۰۲/۱۲/۰۱', mortality: 15, feed: 120, weight: 180, notes: 'شروع خوب' },
+                { day: 7, date: '۱۴۰۲/۱۲/۰۷', mortality: 8, feed: 280, weight: 420, notes: 'وزن‌گیری هفتگی' },
+                { day: 14, date: '۱۴۰۲/۱۲/۱۴', mortality: 5, feed: 550, weight: 890, notes: 'وزن‌گیری هفتگی' },
+                { day: 21, date: '۱۴۰۲/۱۲/۲۱', mortality: 4, feed: 820, weight: 1450, notes: 'وزن‌گیری هفتگی' },
+                { day: 28, date: '۱۴۰۲/۱۲/۲۸', mortality: 3, feed: 1100, weight: 2100, notes: 'وزن‌گیری هفتگی' },
+                { day: 35, date: '۱۴۰۳/۰۱/۰۵', mortality: 2, feed: 1350, weight: 2750, notes: 'وزن‌گیری هفتگی' },
+                { day: 42, date: '۱۴۰۳/۰۱/۱۲', mortality: 2, feed: 1500, weight: 3200, notes: 'آماده فروش' }
             ];
             renderDailyTable();
+            renderWeightSchedule();
         }
 
         function renderDailyTable() {
@@ -497,31 +919,28 @@
             // مرتب‌سازی بر اساس روز
             dailyData.sort((a, b) => a.day - b.day);
             
-            let totalBirds = flockInfo.initialBirds;
-            let totalFeed = 0;
             let prevWeight = 0;
             
             dailyData.forEach((row, index) => {
-                // محاسبه تلفات تجمعی
-                totalBirds -= row.mortality;
-                
-                // محاسبه سرانه مصرف
-                const feedPerBird = totalBirds > 0 ? (row.feed * 1000) / totalBirds : 0;
-                
-                // محاسبه افزایش وزن
+                const birdCount = calculateBirdCountForDay(row.day);
+                const feedPerBird = birdCount > 0 ? (row.feed * 1000) / birdCount : 0;
                 const weightGain = row.weight - prevWeight;
                 prevWeight = row.weight;
-                
-                // محاسبه FCR روزانه
                 const dailyFCR = weightGain > 0 ? (feedPerBird / weightGain) : 0;
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${row.day}</td>
-                    <td><input type="date" value="${row.date}" onchange="updateRow(${index}, 'date', this.value)"></td>
-                    <td><input type="number" value="${row.mortality}" onchange="updateRow(${index}, 'mortality', this.value)"></td>
-                    <td><input type="number" value="${row.feed}" step="0.1" onchange="updateRow(${index}, 'feed', this.value)"></td>
-                    <td><input type="number" value="${row.weight}" onchange="updateRow(${index}, 'weight', this.value)"></td>
+                    <td><input type="text" value="${row.date}" onchange="updateRow(${index}, 'date', this.value)" placeholder="۱۴۰۲/۱۲/۰۱"></td>
+                    <td class="bird-count-cell">${birdCount.toLocaleString()}</td>
+                    <td><input type="number" value="${row.mortality}" min="0" onchange="updateRow(${index}, 'mortality', this.value)"></td>
+                    <td><input type="number" value="${row.feed}" step="0.1" min="0" onchange="updateRow(${index}, 'feed', this.value)"></td>
+                    <td>
+                        ${row.weight > 0 ? row.weight : '-'}
+                        ${row.day % 7 === 0 && row.day !== 1 ? 
+                            `<br><small style="color:#2196f3; cursor:pointer;" onclick="openWeightPopup(${row.day}, '${row.date}')">✏️ ویرایش</small>` 
+                            : ''}
+                    </td>
                     <td>${feedPerBird.toFixed(1)}</td>
                     <td>${weightGain > 0 ? '+' + weightGain : weightGain}</td>
                     <td>${dailyFCR.toFixed(2)}</td>
@@ -535,77 +954,131 @@
         }
 
         function addDailyRow() {
-            const newDay = parseInt(document.getElementById('newDay')?.value) || 1;
+            const newDay = parseInt(document.getElementById('newDay')?.value);
             const newMortality = parseInt(document.getElementById('newMortality')?.value) || 0;
             const newFeed = parseFloat(document.getElementById('newFeed')?.value) || 0;
-            const newWeight = parseFloat(document.getElementById('newWeight')?.value) || 0;
             const newNotes = document.getElementById('newNotes')?.value || '';
             
-            // بررسی تکراری نبودن روز
+            if (!newDay || newDay < 1) {
+                alert('لطفاً روز معتبر وارد کنید');
+                return;
+            }
+            
             if (dailyData.some(row => row.day === newDay)) {
                 alert('این روز قبلاً ثبت شده است');
                 return;
             }
             
+            const currentBirdCount = calculateBirdCountForDay(newDay);
+            if (newMortality > currentBirdCount) {
+                alert(`تلفات نمی‌تواند از تعداد پرنده موجود (${currentBirdCount}) بیشتر باشد`);
+                return;
+            }
+            
+            // محاسبه تاریخ شمسی
+            let jalaliDate = '';
+            try {
+                const [jy, jm, jd] = flockInfo.entryDate.split('/').map(Number);
+                const gDate = jalaali.toGregorian(jy, jm, jd);
+                const entryDate = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+                const targetDate = new Date(entryDate);
+                targetDate.setDate(entryDate.getDate() + (newDay - 1));
+                
+                const jTarget = jalaali.toJalaali(
+                    targetDate.getFullYear(),
+                    targetDate.getMonth() + 1,
+                    targetDate.getDate()
+                );
+                jalaliDate = `${jTarget.jy}/${jTarget.jm.toString().padStart(2, '0')}/${jTarget.jd.toString().padStart(2, '0')}`;
+            } catch (e) {
+                jalaliDate = getCurrentJalaliDate();
+            }
+            
             dailyData.push({
                 day: newDay,
-                date: new Date().toISOString().split('T')[0],
+                date: jalaliDate,
                 mortality: newMortality,
                 feed: newFeed,
-                weight: newWeight,
+                weight: 0,  // وزن فقط از طریق پاپ‌آپ ثبت می‌شود
                 notes: newNotes
             });
             
             renderDailyTable();
+            renderWeightSchedule();
             clearAddForm();
         }
 
         function updateRow(index, field, value) {
-            if (field === 'mortality' || field === 'feed' || field === 'weight') {
+            if (field === 'mortality') {
+                const newMortality = parseFloat(value) || 0;
+                const row = dailyData[index];
+                const birdCount = calculateBirdCountForDay(row.day);
+                
+                if (newMortality > birdCount) {
+                    alert(`تلفات نمی‌تواند از تعداد پرنده موجود (${birdCount}) بیشتر باشد`);
+                    return;
+                }
+                dailyData[index][field] = newMortality;
+            } else if (field === 'feed') {
                 dailyData[index][field] = parseFloat(value) || 0;
             } else {
                 dailyData[index][field] = value;
             }
             renderDailyTable();
+            renderWeightSchedule();
         }
 
         function deleteRow(index) {
             dailyData.splice(index, 1);
             renderDailyTable();
+            renderWeightSchedule();
         }
 
         function clearAddForm() {
-            document.getElementById('newDay').value = dailyData.length + 1;
+            const nextDay = dailyData.length > 0 
+                ? Math.max(...dailyData.map(d => d.day)) + 1 
+                : 1;
+            document.getElementById('newDay').value = nextDay;
             document.getElementById('newMortality').value = 0;
             document.getElementById('newFeed').value = 0;
-            document.getElementById('newWeight').value = 0;
             document.getElementById('newNotes').value = '';
         }
 
         // ================ توابع محاسباتی ================
         
         function calculateFlockPerformance() {
-            if (dailyData.length === 0) return null;
+            if (dailyData.length === 0) {
+                return {
+                    totalMortality: 0,
+                    mortalityPercent: 0,
+                    currentBirds: flockInfo.initialBirds,
+                    totalFeed: 0,
+                    avgWeight: 0,
+                    totalMeat: 0,
+                    fcr: 0,
+                    epef: 0,
+                    age: 0
+                };
+            }
             
             let totalMortality = 0;
             let totalFeed = 0;
             let latestWeight = 0;
-            let totalBirds = flockInfo.initialBirds;
+            let maxDay = 0;
             
             dailyData.forEach(row => {
                 totalMortality += row.mortality;
                 totalFeed += row.feed;
                 if (row.weight > 0) latestWeight = row.weight;
+                if (row.day > maxDay) maxDay = row.day;
             });
             
             const currentBirds = flockInfo.initialBirds - totalMortality;
             const mortalityPercent = (totalMortality / flockInfo.initialBirds) * 100;
             const avgWeight = latestWeight;
-            const totalMeat = (currentBirds * avgWeight) / 1000; // کیلوگرم
+            const totalMeat = (currentBirds * avgWeight) / 1000;
             const fcr = totalMeat > 0 ? totalFeed / totalMeat : 0;
-            
-            // شاخص کارایی اروپایی
-            const epef = ((100 - mortalityPercent) * avgWeight) / (fcr * 10);
+            const epef = fcr > 0 ? ((100 - mortalityPercent) * avgWeight) / (fcr * 10) : 0;
             
             return {
                 totalMortality,
@@ -616,27 +1089,20 @@
                 totalMeat,
                 fcr,
                 epef,
-                age: dailyData[dailyData.length - 1]?.day || 0
+                age: maxDay
             };
         }
 
         function updateAllCalculations() {
             const perf = calculateFlockPerformance();
-            if (!perf) return;
             
-            // بروزرسانی کارت‌های اطلاعات
             document.getElementById('currentAge').textContent = perf.age;
             document.getElementById('currentBirds').textContent = perf.currentBirds.toLocaleString();
             document.getElementById('avgWeight').textContent = perf.avgWeight.toFixed(0);
             document.getElementById('totalFeed').textContent = perf.totalFeed.toLocaleString();
             
-            // بروزرسانی خلاصه محاسبات
             updateSummaryGrid(perf);
-            
-            // بروزرسانی نمودار
             updateGrowthChart();
-            
-            // بروزرسانی توصیه‌ها
             updateRecommendations(perf);
         }
 
@@ -680,17 +1146,14 @@
 
         function updateGrowthChart() {
             const ctx = document.getElementById('growthChart')?.getContext('2d');
-            if (!ctx) return;
+            if (!ctx || dailyData.length === 0) return;
             
-            // آماده‌سازی داده‌ها
-            const days = dailyData.map(d => d.day);
-            const weights = dailyData.map(d => d.weight);
-            const feedPerBird = dailyData.map((d, i) => {
-                let totalBirds = flockInfo.initialBirds;
-                for (let j = 0; j <= i; j++) {
-                    totalBirds -= dailyData[j].mortality;
-                }
-                return totalBirds > 0 ? (d.feed * 1000) / totalBirds : 0;
+            const sortedData = [...dailyData].sort((a, b) => a.day - b.day);
+            const days = sortedData.map(d => d.day);
+            const weights = sortedData.map(d => d.weight);
+            const feedPerBird = sortedData.map(d => {
+                const birdCount = calculateBirdCountForDay(d.day);
+                return birdCount > 0 ? (d.feed * 1000) / birdCount : 0;
             });
             
             if (growthChart) {
@@ -763,38 +1226,33 @@
             
             let recommendations = [];
             
-            // توصیه بر اساس تلفات
-            if (perf.mortalityPercent > 7) {
-                recommendations.push('🔴 تلفات بسیار بالا است - حتماً با دامپزشک مشورت کنید');
-            } else if (perf.mortalityPercent > 5) {
-                recommendations.push('🟡 تلفات بالاست - بررسی وضعیت بهداشت و تهویه');
-            } else if (perf.mortalityPercent < 3) {
-                recommendations.push('✅ تلفات عالی است - مدیریت خود را ادامه دهید');
-            }
-            
-            // توصیه بر اساس FCR
-            if (perf.fcr > 1.9) {
-                recommendations.push('🔴 FCR بالاست - کیفیت دان و مدیریت تغذیه را بررسی کنید');
-            } else if (perf.fcr < 1.6) {
-                recommendations.push('✅ FCR عالی است - برنامه غذایی مناسب است');
-            }
-            
-            // توصیه بر اساس وزن
-            const expectedWeight = perf.age * 60;
-            const weightDiff = ((perf.avgWeight - expectedWeight) / expectedWeight) * 100;
-            
-            if (weightDiff < -10) {
-                recommendations.push('🔴 وزن کمتر از استاندارد - تغذیه و سلامت را بررسی کنید');
-            } else if (weightDiff > 10) {
-                recommendations.push('✅ وزن بالاتر از استاندارد - رشد خوبی دارد');
-            }
-            
-            // توصیه بر اساس مصرف دان
-            const expectedFeed = perf.age * 100; // تقریبی
-            const actualFeed = perf.totalFeed / perf.currentBirds * 1000;
-            
-            if (actualFeed < expectedFeed * 0.8) {
-                recommendations.push('⚠️ مصرف دان کمتر از حد انتظار - اشتها را بررسی کنید');
+            if (perf.totalMortality === 0) {
+                recommendations.push('ℹ️ داده‌ها را وارد کنید تا توصیه‌ها نمایش داده شود');
+            } else {
+                if (perf.mortalityPercent > 7) {
+                    recommendations.push('🔴 تلفات بسیار بالا است - حتماً با دامپزشک مشورت کنید');
+                } else if (perf.mortalityPercent > 5) {
+                    recommendations.push('🟡 تلفات بالاست - بررسی وضعیت بهداشت و تهویه');
+                } else if (perf.mortalityPercent < 3) {
+                    recommendations.push('✅ تلفات عالی است - مدیریت خود را ادامه دهید');
+                }
+                
+                if (perf.fcr > 1.9) {
+                    recommendations.push('🔴 FCR بالاست - کیفیت دان و مدیریت تغذیه را بررسی کنید');
+                } else if (perf.fcr < 1.6 && perf.fcr > 0) {
+                    recommendations.push('✅ FCR عالی است - برنامه غذایی مناسب است');
+                }
+                
+                if (perf.age > 0 && perf.avgWeight > 0) {
+                    const expectedWeight = perf.age * 60;
+                    const weightDiff = ((perf.avgWeight - expectedWeight) / expectedWeight) * 100;
+                    
+                    if (weightDiff < -10) {
+                        recommendations.push('🔴 وزن کمتر از استاندارد - تغذیه و سلامت را بررسی کنید');
+                    } else if (weightDiff > 10) {
+                        recommendations.push('✅ وزن بالاتر از استاندارد - رشد خوبی دارد');
+                    }
+                }
             }
             
             if (recommendations.length === 0) {
@@ -820,67 +1278,75 @@
         function loadFromLocalStorage() {
             const saved = localStorage.getItem('poultryReport');
             if (saved) {
-                const data = JSON.parse(saved);
-                flockInfo = data.flockInfo;
-                dailyData = data.dailyData || [];
-                
-                // بروزرسانی فرم
-                document.getElementById('entryDate').value = flockInfo.entryDate || '';
-                document.getElementById('initialBirds').value = flockInfo.initialBirds || 10000;
-                document.getElementById('flockName').value = flockInfo.flockName || 'سالن ۱';
-                document.getElementById('breed').value = flockInfo.breed || 'راس ۳۰۸';
-                
-                renderDailyTable();
+                try {
+                    const data = JSON.parse(saved);
+                    flockInfo = data.flockInfo || flockInfo;
+                    dailyData = data.dailyData || [];
+                    
+                    document.getElementById('entryDate').value = flockInfo.entryDate || '۱۴۰۲/۱۲/۰۱';
+                    document.getElementById('initialBirds').value = flockInfo.initialBirds || 10000;
+                    document.getElementById('flockName').value = flockInfo.flockName || 'سالن ۱';
+                    document.getElementById('breed').value = flockInfo.breed || 'راس ۳۰۸';
+                    
+                    renderDailyTable();
+                    renderWeightSchedule();
+                } catch (e) {
+                    console.error('خطا در لود اطلاعات:', e);
+                }
             }
         }
 
         function resetData() {
             if (confirm('آیا از ریست کردن اطلاعات اطمینان دارید؟')) {
                 flockInfo = {
-                    entryDate: '',
+                    entryDate: document.getElementById('entryDate')?.value || '۱۴۰۲/۱۲/۰۱',
                     initialBirds: 10000,
                     flockName: 'سالن ۱',
                     breed: 'راس ۳۰۸'
                 };
                 dailyData = [];
                 
-                document.getElementById('entryDate').value = '';
                 document.getElementById('initialBirds').value = 10000;
-                document.getElementById('flockName').value = 'سالن ۱';
-                document.getElementById('breed').value = 'راس ۳۰۸';
                 
                 renderDailyTable();
+                renderWeightSchedule();
                 saveToLocalStorage();
             }
         }
 
         function exportToExcel() {
-            // آماده‌سازی داده‌ها برای خروجی
-            let csv = "روز,تاریخ,تلفات,دان مصرفی,وزن نمونه,توضیحات\n";
+            let csv = "روز,تاریخ شمسی,تعداد پرنده,تلفات,دان مصرفی,وزن نمونه,سرانه مصرف,افزایش وزن,FCR,توضیحات\n";
             
-            dailyData.forEach(row => {
-                csv += `${row.day},${row.date},${row.mortality},${row.feed},${row.weight},"${row.notes || ''}"\n`;
+            const sortedData = [...dailyData].sort((a, b) => a.day - b.day);
+            let prevWeight = 0;
+            
+            sortedData.forEach(row => {
+                const birdCount = calculateBirdCountForDay(row.day);
+                const feedPerBird = birdCount > 0 ? (row.feed * 1000) / birdCount : 0;
+                const weightGain = row.weight - prevWeight;
+                const dailyFCR = weightGain > 0 ? (feedPerBird / weightGain) : 0;
+                prevWeight = row.weight;
+                
+                csv += `${row.day},${row.date},${birdCount},${row.mortality},${row.feed},${row.weight},${feedPerBird.toFixed(1)},${weightGain},${dailyFCR.toFixed(2)},"${row.notes || ''}"\n`;
             });
             
-            // اضافه کردن خلاصه
             const perf = calculateFlockPerformance();
-            if (perf) {
+            if (perf.totalMortality > 0) {
                 csv += "\nخلاصه عملکرد\n";
                 csv += `کل تلفات,${perf.totalMortality}\n`;
                 csv += `درصد تلفات,${perf.mortalityPercent.toFixed(2)}%\n`;
                 csv += `تعداد فعلی,${perf.currentBirds}\n`;
                 csv += `میانگین وزن,${perf.avgWeight}\n`;
-                csv += `کل تولید گوشت,${perf.totalMeat} کیلوگرم\n`;
+                csv += `کل تولید گوشت,${perf.totalMeat.toFixed(2)} کیلوگرم\n`;
                 csv += `FCR,${perf.fcr.toFixed(2)}\n`;
                 csv += `EPEF,${perf.epef.toFixed(0)}\n`;
             }
             
-            // دانلود فایل
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `poultry_report_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute('download', `poultry_report_${getCurrentJalaliDate().replace(/\//g, '-')}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -891,19 +1357,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("✅ صفحه گزارش روزانه لود شد");
             
-            // تلاش برای لود اطلاعات ذخیره شده
-            loadFromLocalStorage();
-            
-            // اگر داده‌ای نبود، داده‌های نمونه را لود کن
-            if (dailyData.length === 0) {
-                loadSampleData();
+            if (!document.getElementById('entryDate').value) {
+                document.getElementById('entryDate').value = '۱۴۰۲/۱۲/۰۱';
             }
             
-            // تنظیم تاریخ پیش‌فرض برای امروز
-            if (!document.getElementById('entryDate').value) {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('entryDate').value = today;
-                flockInfo.entryDate = today;
+            loadFromLocalStorage();
+            
+            if (dailyData.length === 0) {
+                loadSampleData();
             }
             
             updateFlockInfo();
