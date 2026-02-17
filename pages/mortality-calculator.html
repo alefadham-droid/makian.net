@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماشین حساب تلفات - مرغداری</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .calculator-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 1.1em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .result-unit {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .warning-box {
+            background: #fff3e0;
+            border-right: 5px solid #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .warning-box h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #ff9800, #f44336);
+            transition: width 0.3s;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-right: 5px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-box li {
+            margin-bottom: 10px;
+            color: #555;
+            padding-right: 25px;
+            position: relative;
+        }
+        
+        .info-box li:before {
+            content: "✅";
+            position: absolute;
+            right: 0;
+        }
+        
+        .table-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+        }
+        
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📉 ماشین حساب تلفات مرغداری</h1>
+            <a href="../index.html" class="btn" style="margin-top: 20px;">🏠 بازگشت به صفحه اصلی</a>
+        </header>
+
+        <div class="calculator-container">
+            <div class="data-table-section">
+                <h2>📝 محاسبه درصد تلفات و ضرر مالی</h2>
+                
+                <div class="calculator-form">
+                    <!-- تعداد اولیه پرندگان -->
+                    <div class="form-group">
+                        <label>🐔 تعداد اولیه پرندگان:</label>
+                        <input type="number" id="mortalityInitialBirds" min="1" max="100000" value="10000" placeholder="مثال: 10000">
+                        <small style="color: #666;">تعداد جوجه‌های یک روزه در ابتدای دوره</small>
+                    </div>
+
+                    <!-- تعداد تلفات -->
+                    <div class="form-group">
+                        <label>💔 تعداد تلفات:</label>
+                        <input type="number" id="mortalityCount" min="0" max="100000" value="350" placeholder="مثال: 350">
+                        <small style="color: #666;">تعداد پرندگان تلف شده تاکنون</small>
+                    </div>
+
+                    <!-- قیمت هر پرنده -->
+                    <div class="form-group">
+                        <label>💰 قیمت هر پرنده (تومان):</label>
+                        <input type="number" id="mortalityBirdPrice" min="0" max="1000000" value="50000" placeholder="مثال: 50000">
+                        <small style="color: #666;">قیمت تمام شده هر پرنده</small>
+                    </div>
+
+                    <!-- وزن متوسط (اختیاری) -->
+                    <div class="form-group">
+                        <label>⚖️ وزن متوسط پرنده (گرم):</label>
+                        <input type="number" id="mortalityBirdWeight" min="0" max="5000" value="2000" placeholder="مثال: 2000">
+                        <small style="color: #666;">وزن متوسط هر پرنده (برای محاسبه افت تولید)</small>
+                    </div>
+
+                    <!-- دکمه محاسبه -->
+                    <div style="text-align: center; margin: 30px 0;">
+                        <button class="btn btn-success" onclick="window.calculateMortality()" style="font-size: 1.2em; padding: 15px 40px;">
+                            📊 محاسبه تلفات
+                        </button>
+                    </div>
+                </div>
+
+                <!-- نتایج محاسبات -->
+                <div class="results-section" id="mortalityResult" style="display: none;">
+                    <h3>نتایج محاسبات</h3>
+                    <div class="results-grid" id="mortalityResultsGrid">
+                        <!-- نتایج با JavaScript پر می‌شود -->
+                    </div>
+                </div>
+
+                <!-- جدول استاندارد تلفات -->
+                <div class="data-table-section" style="margin-top: 30px;">
+                    <h3>📋 استانداردهای تلفات در سنین مختلف</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>سن (روز)</th>
+                                    <th>تلفات مجاز</th>
+                                    <th>تلفات هشدار</th>
+                                    <th>تلفات بحرانی</th>
+                                    <th>علت اصلی</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>هفته اول (1-7)</td>
+                                    <td>کمتر از 1%</td>
+                                    <td>1% - 2%</td>
+                                    <td>بیشتر از 2%</td>
+                                    <td>کیفیت جوجه، مدیریت اولیه</td>
+                                </tr>
+                                <tr>
+                                    <td>هفته دوم (8-14)</td>
+                                    <td>کمتر از 0.5%</td>
+                                    <td>0.5% - 1%</td>
+                                    <td>بیشتر از 1%</td>
+                                    <td>بیماری‌های گوارشی</td>
+                                </tr>
+                                <tr>
+                                    <td>هفته سوم (15-21)</td>
+                                    <td>کمتر از 0.3%</td>
+                                    <td>0.3% - 0.7%</td>
+                                    <td>بیشتر از 0.7%</td>
+                                    <td>مشکلات تنفسی</td>
+                                </tr>
+                                <tr>
+                                    <td>هفته چهارم (22-28)</td>
+                                    <td>کمتر از 0.2%</td>
+                                    <td>0.2% - 0.5%</td>
+                                    <td>بیشتر از 0.5%</td>
+                                    <td>کوکسیدیوز، تنفسی</td>
+                                </tr>
+                                <tr>
+                                    <td>هفته پنجم به بعد</td>
+                                    <td>کمتر از 0.1%</td>
+                                    <td>0.1% - 0.3%</td>
+                                    <td>بیشتر از 0.3%</td>
+                                    <td>سندرم مرگ ناگهانی</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- راهنمای مدیریت تلفات -->
+                <div class="info-box">
+                    <h3>💡 راهنمای مدیریت تلفات:</h3>
+                    <ul>
+                        <li><strong>تلفات کمتر از 3%:</strong> عالی - مدیریت خود را ادامه دهید</li>
+                        <li><strong>تلفات 3% تا 5%:</strong> قابل قبول - نیاز به پایش دقیق‌تر</li>
+                        <li><strong>تلفات 5% تا 7%:</strong> هشدار - بررسی علل و رفع مشکل</li>
+                        <li><strong>تلفات بیشتر از 7%:</strong> بحرانی - مداخله فوری لازم است</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: #666; font-size: 0.95em;">
+                        * تلفات نرمال در کل دوره پرورش (42 روز) حدود 4-5% است
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>تمامی حقوق محفوظ است © ۱۴۰۴</p>
+    </footer>
+
+    <script src="../js/calculator.js"></script>
+    
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script>
+        window.calculateMortality = function() {
+            console.log("✅ دکمه محاسبه تلفات کلیک شد");
+            
+            try {
+                // دریافت مقادیر از فرم
+                const initialBirds = parseFloat(document.getElementById('mortalityInitialBirds')?.value);
+                const mortalityCount = parseFloat(document.getElementById('mortalityCount')?.value);
+                const birdPrice = parseFloat(document.getElementById('mortalityBirdPrice')?.value) || 0;
+                const birdWeight = parseFloat(document.getElementById('mortalityBirdWeight')?.value) || 0;
+
+                console.log("مقادیر دریافت شد:", {initialBirds, mortalityCount, birdPrice, birdWeight});
+
+                // اعتبارسنجی
+                if (!initialBirds || !mortalityCount) {
+                    alert("لطفاً تعداد اولیه پرندگان و تعداد تلفات را وارد کنید");
+                    return;
+                }
+
+                if (initialBirds <= 0 || mortalityCount < 0) {
+                    alert("مقادیر وارد شده معتبر نیستند");
+                    return;
+                }
+
+                if (mortalityCount > initialBirds) {
+                    alert("تعداد تلفات نمی‌تواند از تعداد اولیه بیشتر باشد");
+                    return;
+                }
+
+                // محاسبه درصد تلفات ✅
+                const mortalityPercent = (mortalityCount / initialBirds) * 100;
+                
+                // محاسبه تعداد پرندگان زنده
+                const remainingBirds = initialBirds - mortalityCount;
+                
+                // محاسبه ضرر مالی
+                const financialLoss = mortalityCount * birdPrice;
+                
+                // محاسبه افت تولید (اگر وزن وارد شده باشد)
+                let productionLoss = 0;
+                if (birdWeight > 0) {
+                    productionLoss = (mortalityCount * birdWeight) / 1000; // تبدیل به کیلوگرم
+                }
+
+                // تعیین وضعیت تلفات
+                let mortalityStatus = '';
+                let statusColor = '';
+                let statusMessage = '';
+
+                if (mortalityPercent < 3) {
+                    mortalityStatus = '✅ عالی';
+                    statusColor = '#4caf50';
+                    statusMessage = 'مدیریت عالی! تلفات بسیار کم است.';
+                } else if (mortalityPercent < 5) {
+                    mortalityStatus = '🟡 قابل قبول';
+                    statusColor = '#ff9800';
+                    statusMessage = 'تلفات در محدوده نرمال است.';
+                } else if (mortalityPercent < 7) {
+                    mortalityStatus = '⚠️ هشدار';
+                    statusColor = '#f44336';
+                    statusMessage = 'تلفات بالاست - بررسی کنید.';
+                } else {
+                    mortalityStatus = '🔴 بحرانی';
+                    statusColor = '#d32f2f';
+                    statusMessage = 'تلفات بسیار بالا - مداخله فوری لازم است!';
+                }
+
+                // نمایش نتایج
+                const resultDiv = document.getElementById('mortalityResult');
+                const resultsGrid = document.getElementById('mortalityResultsGrid');
+                
+                if (resultDiv && resultsGrid) {
+                    resultsGrid.innerHTML = `
+                        <!-- کارت درصد تلفات ✅ -->
+                        <div class="result-item" style="border-top: 5px solid ${statusColor};">
+                            <h4>درصد تلفات</h4>
+                            <div class="result-value" style="color: ${statusColor};">${mortalityPercent.toFixed(2)}%</div>
+                            <div class="result-unit">${mortalityCount} پرنده تلف شده</div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: ${statusColor};">${mortalityStatus}</div>
+                        </div>
+                        
+                        <!-- کارت ضرر مالی -->
+                        <div class="result-item">
+                            <h4>ضرر مالی</h4>
+                            <div class="result-value">${financialLoss.toLocaleString()}</div>
+                            <div class="result-unit">تومان</div>
+                            <small>به ازای هر پرنده: ${(financialLoss / mortalityCount).toLocaleString()} تومان</small>
+                        </div>
+                        
+                        <!-- کارت پرندگان زنده -->
+                        <div class="result-item">
+                            <h4>پرندگان زنده</h4>
+                            <div class="result-value">${remainingBirds.toLocaleString()}</div>
+                            <div class="result-unit">تعداد</div>
+                            <small>${((remainingBirds / initialBirds) * 100).toFixed(1)}% از کل</small>
+                        </div>
+                        
+                        <!-- کارت میانگین تلفات روزانه (فرضی) -->
+                        <div class="result-item">
+                            <h4>میانگین روزانه تلفات</h4>
+                            <div class="result-value">${(mortalityCount / 42).toFixed(1)}</div>
+                            <div class="result-unit">پرنده در روز</div>
+                            <small>بر اساس دوره 42 روزه</small>
+                        </div>
+                    `;
+
+                    // اضافه کردن کارت افت تولید اگر وزن وارد شده باشد
+                    if (productionLoss > 0) {
+                        const lossCard = document.createElement('div');
+                        lossCard.className = 'result-item';
+                        lossCard.innerHTML = `
+                            <h4>افت تولید گوشت</h4>
+                            <div class="result-value">${productionLoss.toFixed(0)}</div>
+                            <div class="result-unit">کیلوگرم</div>
+                            <small>وزن از دست رفته</small>
+                        `;
+                        resultsGrid.appendChild(lossCard);
+                    }
+
+                    // اضافه کردن کارت هشدار
+                    const warningCard = document.createElement('div');
+                    warningCard.className = 'result-item';
+                    warningCard.style.background = '#fff3e0';
+                    warningCard.innerHTML = `
+                        <h4 style="color: #e65100;">وضعیت</h4>
+                        <div style="font-size: 1.1em; margin: 10px 0;">${statusMessage}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min(100, (mortalityPercent / 10) * 100)}%;"></div>
+                        </div>
+                        <small>شدت تلفات: ${mortalityPercent > 7 ? 'بحرانی' : mortalityPercent > 5 ? 'زیاد' : mortalityPercent > 3 ? 'متوسط' : 'کم'}</small>
+                    `;
+                    resultsGrid.appendChild(warningCard);
+                    
+                    resultDiv.style.display = 'block';
+                    
+                    // اسکرول به نتایج
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+            } catch (error) {
+                console.error("خطا در محاسبه تلفات:", error);
+                alert("خطا در محاسبات. لطفاً دوباره تلاش کنید.");
+            }
+        };
+
+        // محاسبه خودکار با Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = ['mortalityInitialBirds', 'mortalityCount', 'mortalityBirdPrice', 'mortalityBirdWeight'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            window.calculateMortality();
+                        }
+                    });
+                }
+            });
+            
+            // مقداردهی اولیه
+            console.log("✅ صفحه تلفات لود شد");
+        });
+    </script>
+</body>
+</html>
