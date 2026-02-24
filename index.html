@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* استایل‌های موجود شما */
+        /* استایل‌های موجود شما + استایل‌های چت بات */
         .date-header {
             background: white;
             border-radius: 50px;
@@ -24,7 +24,6 @@
             margin-left: 8px;
         }
 
-        /* استایل‌های جدید برای بخش چت بات */
         .chat-section {
             margin-top: 50px;
             padding: 30px;
@@ -168,7 +167,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* تنظیمات ریسپانسیو */
         @media (max-width: 768px) {
             .input-area {
                 flex-direction: column;
@@ -192,39 +190,31 @@
         </header>
 
         <div class="cards-grid">
-            <!-- کارت ماشین حساب ضریب تبدیل -->
+            <!-- کارت‌های ماشین حساب (همانند قبل) -->
             <div class="card">
                 <div class="card-icon">📊</div>
                 <h2>ضریب تبدیل غذایی (FCR)</h2>
                 <p>محاسبه ضریب تبدیل خوراک به گوشت</p>
                 <a href="pages/fcr-calculator.html" class="btn">محاسبه</a>
             </div>
-
-            <!-- کارت ماشین حساب تلفات -->
             <div class="card">
                 <div class="card-icon">📉</div>
                 <h2>درصد تلفات</h2>
                 <p>محاسبه تلفات و هزینه های ناشی از آن</p>
                 <a href="pages/mortality-calculator.html" class="btn">محاسبه</a>
             </div>
-
-            <!-- کارت ماشین حساب دانخوری -->
             <div class="card">
                 <div class="card-icon">⚖️</div>
                 <h2>سرانه مصرف دان</h2>
                 <p>بررسی مصرف دان نسبت به وزن پرنده</p>
                 <a href="pages/feed-conversion.html" class="btn">محاسبه</a>
             </div>
-
-            <!-- کارت ماشین حساب تنظیم دور فن -->
             <div class="card">
                 <div class="card-icon">🌀</div>
                 <h2>تنظیم دور فن (تهویه)</h2>
                 <p>محاسبه تهویه مورد نیاز و تنظیم دور فن</p>
                 <a href="pages/fan-calculator.html" class="btn">محاسبه تهویه</a>
             </div>
-
-            <!-- کارت گزارش روزانه -->
             <div class="card">
                 <div class="card-icon">📋</div>
                 <h2>گزارش روزانه</h2>
@@ -233,9 +223,9 @@
             </div>
         </div>
 
-        <!-- جدول ثبت دادهها -->
+        <!-- جدول ثبت داده‌ها (همانند قبل) -->
         <div class="data-table-section">
-            <h2>📋 ثبت دادههای روزانه</h2>
+            <h2>📋 ثبت داده‌های روزانه</h2>
             <div class="table-container">
                 <table id="dataTable">
                     <thead>
@@ -250,7 +240,7 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- ردیفها با JavaScript اضافه میشوند -->
+                        <!-- ردیف‌ها با JavaScript اضافه می‌شوند -->
                     </tbody>
                 </table>
             </div>
@@ -261,26 +251,21 @@
                 <button class="btn btn-danger" onclick="resetTable()">🔄 ریست جدول</button>
             </div>
 
-            <!-- نتایج محاسبات -->
             <div class="results-section" id="resultsSection">
                 <h3>نتایج محاسبات</h3>
-                <div class="results-grid" id="resultsGrid">
-                    <!-- نتایج اینجا نمایش داده میشود -->
-                </div>
+                <div class="results-grid" id="resultsGrid"></div>
             </div>
         </div>
 
-        <!-- بخش جدید: چت بات هوشمند -->
+        <!-- بخش چت بات هوشمند -->
         <div class="chat-section">
             <h2>🤖 دستیار هوشمند مرغداری</h2>
             <div class="chat-controls">
                 <button class="clear-btn" id="clearChatBtn">🗑️ پاک کردن تاریخچه</button>
             </div>
-            <div class="chat-container" id="chatContainer">
-                <!-- پیام‌ها با جاوااسکریپت اضافه می‌شوند -->
-            </div>
+            <div class="chat-container" id="chatContainer"></div>
             <div class="input-area">
-                <input type="text" id="messageInput" placeholder="سوال خود را بپرسید (مثلاً: ضریب تبدیل چگونه محاسبه می‌شود؟)" autocomplete="off">
+                <input type="text" id="messageInput" placeholder="سوال خود را بپرسید..." autocomplete="off">
                 <button id="sendBtn">ارسال</button>
             </div>
         </div>
@@ -292,7 +277,13 @@
 
     <script src="js/calculator.js"></script>
     <script>
-        // توابع تاریخ شمسی (مطابق کد قبلی شما)
+        // ==================== تنظیمات API ====================
+        // ⚠️ هشدار: قرار دادن API Key در کد سمت کاربر ناامن است.
+        // این روش فقط برای تست محلی توصیه می‌شود. برای محیط واقعی حتماً از پروکسی استفاده کنید.
+        const API_KEY = 'sk-d69533b0025d40aaa62c0039bb48aaff'; // کلید واقعی خود را جایگزین کنید
+        const API_URL = 'https://api.deepseek.com/v1/chat/completions'; // آدرس DeepSeek API
+
+        // توابع تاریخ شمسی (مطابق کد قبلی)
         function getTodayJalali() {
             const today = new Date();
             const j = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
@@ -345,17 +336,15 @@
             return { jy, jm, jd };
         }
 
-        // کد چت بات (با فرض وجود Worker مشابه پروژه قبلی)
+        // ==================== کد اصلی ====================
         document.addEventListener('DOMContentLoaded', function() {
             // نمایش تاریخ شمسی
             document.getElementById('jalaliDate').textContent = getTodayJalali();
 
-            // ==================== بخش چت بات ====================
-            const WORKER_URL = 'https://invoice-proxy.alef-adham.workers.dev'; // همان Worker قبلی (در صورت نیاز تغییر دهید)
-            const MODEL = 'deepseek-chat';
-            const MAX_TOKENS = 2000;
-            const TEMPERATURE = 0.7;
+            // ========== بخش پردازش فاکتور (اگر در این صفحه وجود داشت) ==========
+            // (در این صفحه فاکتور نداریم، اما اگر بعداً اضافه شود، می‌توان از همین API_KEY استفاده کرد)
 
+            // ========== بخش چت بات ==========
             let messages = [
                 { role: 'assistant', content: 'سلام! من دستیار هوشمند مرغداری هستم. می‌توانید سوالات خود را در مورد محاسبات مرغداری، FCR، تلفات، تهویه و ... بپرسید.' }
             ];
@@ -370,11 +359,9 @@
                 messages.forEach(msg => {
                     const messageDiv = document.createElement('div');
                     messageDiv.className = `message ${msg.role === 'user' ? 'user-message' : 'assistant-message'}`;
-
                     const bubble = document.createElement('div');
                     bubble.className = 'message-bubble';
                     bubble.textContent = msg.content;
-
                     messageDiv.appendChild(bubble);
                     chatContainer.appendChild(messageDiv);
                 });
@@ -415,29 +402,24 @@
                 try {
                     const apiMessages = messages.map(m => ({ role: m.role, content: m.content }));
 
-                    const response = await fetch(WORKER_URL, {
+                    const response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
+                        },
                         body: JSON.stringify({
-                            model: MODEL,
+                            model: 'deepseek-chat',
                             messages: apiMessages,
-                            max_tokens: MAX_TOKENS,
-                            temperature: TEMPERATURE
+                            max_tokens: 2000,
+                            temperature: 0.7
                         })
                     });
 
                     const data = await response.json();
 
                     if (data.error) {
-                        let errorMessage = data.error;
-                        if (data.details) {
-                            try {
-                                const details = JSON.parse(data.details);
-                                errorMessage = details.error?.message || details.message || JSON.stringify(details);
-                            } catch {
-                                errorMessage = data.details;
-                            }
-                        }
+                        let errorMessage = data.error.message || JSON.stringify(data.error);
                         throw new Error(errorMessage);
                     }
 
@@ -446,7 +428,6 @@
                     }
 
                     const assistantContent = data.choices[0].message.content;
-
                     hideLoading();
                     addMessage('assistant', assistantContent);
 
