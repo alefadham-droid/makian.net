@@ -1,1 +1,140 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#10b981"/><meta name="description" content="ماکیان.نت - سامانه هوشمند مدیریت مزرعه پرورش طیور"/><link rel="apple-touch-icon" href="/logo192.png"/><link rel="manifest" href="/manifest.json"/><title>ماکیان.نت</title><script defer="defer" src="/static/js/main.41a9019b.js"></script><link href="/static/css/main.31d6cfe0.css" rel="stylesheet"></head><body><noscript>برای استفاده از این برنامه، جاوااسکریپت را فعال کنید.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد مدیریت مرغداری</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- هدر -->
+        <div class="header">
+            <div class="logo">
+                <h1>مرغداری</h1>
+            </div>
+            <div class="nav-menu">
+                <span class="nav-item active">داشبورد</span>
+                <span class="nav-item">گزارشات</span>
+                <span class="nav-item">مدیریت</span>
+                <span class="nav-item" onclick="openSettings()">تنظیمات</span>
+            </div>
+            <div class="profile">
+                <span>مدیر سیستم</span>
+                <div class="avatar">م</div>
+            </div>
+        </div>
+
+        <!-- ردیف ۱: موجودی سالن‌ها -->
+        <div class="row" id="hallsRow"></div>
+
+        <!-- ردیف ۲: مصرف دان و ضریب تبدیل -->
+        <div class="row-2">
+            <div class="metric-card">
+                <div class="metric-info">
+                    <h3>🌾 مصرف دان</h3>
+                    <div class="value" id="feedConsumption">۷۴۸</div>
+                    <div class="metric-unit">کیلوگرم</div>
+                </div>
+                <div class="metric-icon">📊</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-info">
+                    <h3>📈 ضریب تبدیل</h3>
+                    <div class="value" id="conversionRate">۱.۸۵</div>
+                    <div class="metric-unit">kg/kg</div>
+                </div>
+                <div class="metric-icon">🔄</div>
+            </div>
+        </div>
+
+        <!-- ردیف ۳: گزارش روزانه و محاسبات -->
+        <div class="row-3">
+            <div class="action-card" onclick="openDailyReport()">
+                <div class="action-icon">📋</div>
+                <div class="action-text">
+                    <h4>گزارش روزانه</h4>
+                    <p>ثبت گزارش جدید</p>
+                </div>
+            </div>
+            <div class="action-card" onclick="openWaterVaccine()">
+                <div class="action-icon">💉</div>
+                <div class="action-text">
+                    <h4>محاسبه آب واکسن</h4>
+                    <p>مقدار آب مورد نیاز</p>
+                </div>
+            </div>
+            <div class="action-card" onclick="openWaterCalc()">
+                <div class="action-icon">💧</div>
+                <div class="action-text">
+                    <h4>محاسبه مصرف آب</h4>
+                    <p>مصرف روزانه</p>
+                </div>
+            </div>
+            <div class="action-card" onclick="openConsumptionCalc()">
+                <div class="action-icon">🧮</div>
+                <div class="action-text">
+                    <h4>محاسبه مصرف شده</h4>
+                    <p>دان و آب مصرف شده</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ردیف ۴: نمودار تلفات و محاسبات بیشتر -->
+        <div class="row-4">
+            <div class="settings-card" onclick="openMortalityChart()">
+                <div class="settings-icon">📉</div>
+                <div class="action-text">
+                    <h4>نمودار تلفات</h4>
+                    <p>نمایش گرافیکی</p>
+                </div>
+            </div>
+            <div class="settings-card" onclick="openMoreCalculations()">
+                <div class="settings-icon">📊</div>
+                <div class="action-text">
+                    <h4>محاسبات تکمیلی</h4>
+                    <p>گزارشات تحلیلی</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ردیف ۵: نمودارها -->
+        <div class="row-5">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📊 نمودار میانگین وزن</h3>
+                    <span>۷ روز اخیر</span>
+                </div>
+                <div class="chart-placeholder" id="weightChart"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📉 نمودار تلفات</h3>
+                    <span>۷ روز اخیر</span>
+                </div>
+                <div class="chart-placeholder" id="mortalityChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال تنظیمات -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ تنظیمات</h2>
+                <button class="close-btn" onclick="closeSettingsModal()">×</button>
+            </div>
+            <div id="hallsEditContainer"></div>
+            <button class="add-hall-btn" onclick="addNewHall()">
+                <span>+</span> افزودن سالن جدید
+            </button>
+            <div class="modal-actions">
+                <button class="modal-btn primary" onclick="saveHallChanges()">ذخیره تغییرات</button>
+                <button class="modal-btn secondary" onclick="closeSettingsModal()">انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
