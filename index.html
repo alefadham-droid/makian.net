@@ -1,287 +1,9 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ماشین حساب مرغداری | چت بات هوشمند</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* استایل‌های موجود شما + استایل‌های چت بات */
-        .date-header {
-            background: white;
-            border-radius: 50px;
-            padding: 10px 20px;
-            display: inline-block;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            color: #333;
-            font-weight: 500;
-        }
-
-        .date-header i {
-            color: #667eea;
-            margin-left: 8px;
-        }
-
-        .chat-section {
-            margin-top: 50px;
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            color: white;
-        }
-
-        .chat-section h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        .chat-container {
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
-            padding: 20px;
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-message {
-            align-items: flex-start;
-        }
-
-        .assistant-message {
-            align-items: flex-end;
-        }
-
-        .message-bubble {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            word-wrap: break-word;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .user-message .message-bubble {
-            background: #667eea;
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .assistant-message .message-bubble {
-            background: #e9ecef;
-            color: #333;
-            border-bottom-left-radius: 5px;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 10px;
-            background: white;
-            padding: 10px;
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            font-family: 'Vazirmatn', sans-serif;
-        }
-
-        #sendBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #sendBtn:hover:not(:disabled) {
-            transform: scale(1.05);
-        }
-
-        #sendBtn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .chat-controls {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 10px;
-        }
-
-        .clear-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 8px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .clear-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            color: #666;
-            justify-content: center;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .input-area {
-                flex-direction: column;
-                border-radius: 20px;
-            }
-            
-            #sendBtn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="date-header">
-                <i>📅</i> امروز: <span id="jalaliDate">۱۴۰۲/۱۲/۰۱</span>
-            </div>
-            <h1>🧮 ماشین حساب تخصصی مرغداری</h1>
-            <p>محاسبه دقیق پارامترهای پرورش طیور</p>
-        </header>
-
-        <div class="cards-grid">
-            <!-- کارت‌های ماشین حساب (همانند قبل) -->
-            <div class="card">
-                <div class="card-icon">📊</div>
-                <h2>ضریب تبدیل غذایی (FCR)</h2>
-                <p>محاسبه ضریب تبدیل خوراک به گوشت</p>
-                <a href="pages/fcr-calculator.html" class="btn">محاسبه</a>
-            </div>
-            <div class="card">
-                <div class="card-icon">📉</div>
-                <h2>درصد تلفات</h2>
-                <p>محاسبه تلفات و هزینه های ناشی از آن</p>
-                <a href="pages/mortality-calculator.html" class="btn">محاسبه</a>
-            </div>
-            <div class="card">
-                <div class="card-icon">⚖️</div>
-                <h2>سرانه مصرف دان</h2>
-                <p>بررسی مصرف دان نسبت به وزن پرنده</p>
-                <a href="pages/feed-conversion.html" class="btn">محاسبه</a>
-            </div>
-            <div class="card">
-                <div class="card-icon">🌀</div>
-                <h2>تنظیم دور فن (تهویه)</h2>
-                <p>محاسبه تهویه مورد نیاز و تنظیم دور فن</p>
-                <a href="pages/fan-calculator.html" class="btn">محاسبه تهویه</a>
-            </div>
-            <div class="card">
-                <div class="card-icon">📋</div>
-                <h2>گزارش روزانه</h2>
-                <p>ثبت وقایع روزانه، محاسبات خودکار و نمودار رشد</p>
-                <a href="pages/daily-report.html" class="btn">مشاهده گزارش</a>
-            </div>
-        </div>
-
-        <!-- جدول ثبت داده‌ها (همانند قبل) -->
-        <div class="data-table-section">
-            <h2>📋 ثبت داده‌های روزانه</h2>
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>روز پرورش</th>
-                            <th>تاریخ (شمسی)</th>
-                            <th>تعداد پرنده</th>
-                            <th>وزن (گرم)</th>
-                            <th>دان مصرفی (کیلوگرم)</th>
-                            <th>تلفات</th>
-                            <th>عملیات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- ردیف‌ها با JavaScript اضافه می‌شوند -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-controls">
-                <button class="btn btn-success" onclick="addRow()">➕ افزودن ردیف</button>
-                <button class="btn btn-primary" onclick="calculateAll()">📊 محاسبه نهایی</button>
-                <button class="btn btn-danger" onclick="resetTable()">🔄 ریست جدول</button>
-            </div>
-
-            <div class="results-section" id="resultsSection">
-                <h3>نتایج محاسبات</h3>
-                <div class="results-grid" id="resultsGrid"></div>
-            </div>
-        </div>
-
-        <!-- بخش چت بات هوشمند -->
-        <div class="chat-section">
-            <h2>🤖 دستیار هوشمند مرغداری</h2>
-            <div class="chat-controls">
-                <button class="clear-btn" id="clearChatBtn">🗑️ پاک کردن تاریخچه</button>
-            </div>
-            <div class="chat-container" id="chatContainer"></div>
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="سوال خود را بپرسید..." autocomplete="off">
-                <button id="sendBtn">ارسال</button>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>تمامی حقوق محفوظ است © ۱۴۰۴</p>
-    </footer>
-
     <script src="js/calculator.js"></script>
     <script>
-        // ==================== تنظیمات API ====================
-        // ⚠️ هشدار: قرار دادن API Key در کد سمت کاربر ناامن است.
-        // این روش فقط برای تست محلی توصیه می‌شود. برای محیط واقعی حتماً از پروکسی استفاده کنید.
-        const API_KEY = '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'; // کلید واقعی خود را جایگزین کنید
-        const API_URL = 'https://openrouter.ai/api/v1/chat/completions'; // آدرس DeepSeek API
+        // ==================== تنظیمات امن با پروکسی ====================
+        // ✅ این نسخه امن است - کلید API در مرورگر دیده نمی‌شود
+        // آدرس Worker پروکسی شما - بعد از دیپلوی، این آدرس را جایگزین کنید
+        const WORKER_URL = 'https://your-worker.your-username.workers.dev'; // ⚠️ این خط را بعداً تغییر دهید
 
         // توابع تاریخ شمسی (مطابق کد قبلی)
         function getTodayJalali() {
@@ -290,63 +12,14 @@
             return `${j.jy}/${j.jm.toString().padStart(2, '0')}/${j.jd.toString().padStart(2, '0')}`;
         }
 
-        function gregorianToJalali(gy, gm, gd) {
-            let g_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            let j_days_in_month = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
-
-            let gy2 = (gm > 2) ? (gy + 1) : gy;
-            let days = 365 * (gy + 1) + Math.floor((gy2 - 1) / 4) - Math.floor((gy2 - 1) / 100) + Math.floor((gy2 - 1) / 400);
-
-            for (let i = 0; i < gm - 1; i++) {
-                if (i === 1 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) {
-                    days += 29;
-                } else {
-                    days += g_days_in_month[i];
-                }
-            }
-            days += gd;
-
-            let jy = 979;
-            let jm = 1;
-            let jd = 1;
-
-            days -= 226896;
-
-            while (days >= (365 * 4 + 1) * 4) {
-                days -= (365 * 4 + 1) * 4;
-                jy += 4;
-            }
-
-            while (days >= 365) {
-                if ((jy % 4 === 2 && jy % 128 !== 0) || (jy % 1320 === 3)) {
-                    days -= 366;
-                } else {
-                    days -= 365;
-                }
-                jy++;
-            }
-
-            while (days >= j_days_in_month[jm - 1]) {
-                days -= j_days_in_month[jm - 1];
-                jm++;
-            }
-
-            jd = days + 1;
-
-            return { jy, jm, jd };
-        }
-
         // ==================== کد اصلی ====================
         document.addEventListener('DOMContentLoaded', function() {
             // نمایش تاریخ شمسی
             document.getElementById('jalaliDate').textContent = getTodayJalali();
 
-            // ========== بخش پردازش فاکتور (اگر در این صفحه وجود داشت) ==========
-            // (در این صفحه فاکتور نداریم، اما اگر بعداً اضافه شود، می‌توان از همین API_KEY استفاده کرد)
-
             // ========== بخش چت بات ==========
             let messages = [
-                { role: 'assistant', content: 'سلام! من دستیار هوشمند مرغداری هستم. می‌توانید سوالات خود را در مورد محاسبات مرغداری، FCR، تلفات، تهویه و ... بپرسید.' }
+                { role: 'assistant', content: 'سلام! من دستیار هوشمند مرغداری هستم. میتوانید سوالات خود را در مورد محاسبات مرغداری، FCR، تلفات، تهویه و ... بپرسید.' }
             ];
 
             const chatContainer = document.getElementById('chatContainer');
@@ -402,14 +75,12 @@
                 try {
                     const apiMessages = messages.map(m => ({ role: m.role, content: m.content }));
 
-                    const response = await fetch(API_URL, {
+                    // درخواست به Worker پروکسی (نه مستقیم به OpenRouter)
+                    const response = await fetch(WORKER_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}`
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            model: 'deepseek-chat',
+                            model: 'meituan/longcat-flash-chat',
                             messages: apiMessages,
                             max_tokens: 2000,
                             temperature: 0.7
@@ -419,8 +90,7 @@
                     const data = await response.json();
 
                     if (data.error) {
-                        let errorMessage = data.error.message || JSON.stringify(data.error);
-                        throw new Error(errorMessage);
+                        throw new Error(data.error.message || JSON.stringify(data.error));
                     }
 
                     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
@@ -434,6 +104,7 @@
                 } catch (error) {
                     hideLoading();
                     addMessage('assistant', `❌ خطا: ${error.message}`);
+                    console.error('جزئیات خطا:', error);
                 } finally {
                     sendBtn.disabled = false;
                     messageInput.disabled = false;
@@ -450,7 +121,7 @@
 
             clearBtn.addEventListener('click', () => {
                 messages = [
-                    { role: 'assistant', content: 'سلام! من دستیار هوشمند مرغداری هستم. می‌توانید سوالات خود را در مورد محاسبات مرغداری، FCR، تلفات، تهویه و ... بپرسید.' }
+                    { role: 'assistant', content: 'سلام! من دستیار هوشمند مرغداری هستم. میتوانید سوالات خود را در مورد محاسبات مرغداری، FCR، تلفات، تهویه و ... بپرسید.' }
                 ];
                 renderMessages();
             });
@@ -459,5 +130,3 @@
             messageInput.focus();
         });
     </script>
-</body>
-</html>
