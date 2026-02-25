@@ -1,15 +1,35 @@
-// داده‌های سالن‌ها با یک سالن پیش‌فرض
-let halls = [
-    { 
-        id: 1, 
-        name: 'سالن ۱', 
-        initialCount: 10000, 
-        count: 10000, 
-        breed: 'راس 308', 
-        entryDate: '1404/4/12',
-        dailyReports: [] 
+// داده‌های سالن‌ها با یک سالن پیش‌فرض (در صورت نبود داده)
+let halls = [];
+
+// بارگذاری اولیه از localStorage
+function loadHallsFromStorage() {
+    const saved = localStorage.getItem('poultry_halls');
+    if (saved) {
+        try {
+            halls = JSON.parse(saved);
+        } catch (e) {
+            halls = [];
+        }
+    } else {
+        // مقدار پیش‌فرض
+        halls = [
+            { 
+                id: 1, 
+                name: 'سالن ۱', 
+                initialCount: 10000, 
+                count: 10000, 
+                breed: 'راس 308', 
+                entryDate: '1404/4/12',
+                dailyReports: [] 
+            }
+        ];
     }
-];
+}
+
+// ذخیره halls در localStorage
+function saveHallsToStorage() {
+    localStorage.setItem('poultry_halls', JSON.stringify(halls));
+}
 
 // تابع تبدیل تاریخ میلادی به شمسی با ساعت و دقیقه
 function toJalaliWithTime(date) {
@@ -33,6 +53,7 @@ function checkAuth() {
         document.getElementById('dashboardContainer').classList.remove('hidden');
         const user = JSON.parse(loggedInUser);
         document.getElementById('profileName').innerText = user.firstName + ' ' + user.lastName;
+        loadHallsFromStorage();  // بارگذاری اطلاعات سالن‌ها
         updateHallsDisplay();
         updateMainMetrics();
     } else {
@@ -201,6 +222,7 @@ function deleteHall(id) {
         renderHallsEdit();
         updateHallsDisplay();
         updateMainMetrics();
+        saveHallsToStorage();
     }
 }
 
@@ -226,6 +248,7 @@ function saveHallChanges() {
 
     updateHallsDisplay();
     updateMainMetrics();
+    saveHallsToStorage();
     closeSettingsModal();
     alert('✅ تغییرات ذخیره شد');
 }
@@ -278,7 +301,7 @@ function openReportsModal() {
         option.textContent = hall.name;
         select.appendChild(option);
     });
-    loadReportsIntoModal(halls[0].id);
+    loadReportsIntoModal(halls[0]?.id);
     modal.classList.add('active');
 }
 function closeReportsModal() { document.getElementById('reportsModal').classList.remove('active'); }
@@ -398,6 +421,7 @@ function submitModalDailyReport() {
     if (hall.count < 0) hall.count = 0;
 
     updateMainMetrics();
+    saveHallsToStorage(); // ذخیره پس از ثبت گزارش
 
     alert('✅ گزارش روزانه ثبت شد');
     document.getElementById('modalMortalityInput').value = 0;
@@ -411,6 +435,53 @@ function submitModalDailyReport() {
         const select = document.getElementById('modalReportHallSelect');
         if (select) loadReportsIntoModal(select.value);
     }
+}
+
+// ==================== توابع مدیریت اطلاعات (Export/Import) ====================
+function exportData() {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const data = {
+        users: users,
+        halls: halls
+    };
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `poultry_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            // اعتبارسنجی ساده
+            if (data.users !== undefined && data.halls !== undefined) {
+                // ذخیره کاربران
+                localStorage.setItem('users', JSON.stringify(data.users));
+                // جایگزینی halls
+                halls = data.halls;
+                saveHallsToStorage();
+                // به‌روزرسانی رابط کاربری
+                updateHallsDisplay();
+                updateMainMetrics();
+                alert('✅ اطلاعات با موفقیت بارگذاری شد.');
+            } else {
+                alert('❌ ساختار فایل نامعتبر است.');
+            }
+        } catch (error) {
+            alert('❌ خطا در خواندن فایل: ' + error.message);
+        }
+        // پاک کردن مقدار input تا بتوان دوباره فایل یکسان انتخاب کرد
+        document.getElementById('importFile').value = '';
+    };
+    reader.readAsText(file);
 }
 
 // بستن مودال با کلیک بیرون
