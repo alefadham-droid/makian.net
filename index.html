@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داشبورد مدیریت مرغداری</title>
+    <title>داشبورد مرغداری</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <!-- هدر -->
+        <!-- هدر با منوهای کشویی -->
         <div class="header">
-            <div class="logo">
-                <h1>مرغداری</h1>
-            </div>
+            <div class="logo"><h1>مرغداری</h1></div>
             <div class="nav-menu">
-                <span class="nav-item active">داشبورد</span>
-                <span class="nav-item">گزارشات</span>
-                <span class="nav-item">مدیریت</span>
-                <span class="nav-item" onclick="openSettings()">تنظیمات</span>
+                <!-- Dropdown گزارش‌ها -->
+                <div class="dropdown">
+                    <button class="dropbtn">📋 گزارش‌ها</button>
+                    <div class="dropdown-content">
+                        <span onclick="openDailyReportModal()">گزارش روزانه</span>
+                        <span onclick="alert('ثبت خریدهای دوره به زودی')">ثبت خریدهای دوره</span>
+                        <span onclick="alert('گزارشات فروش مرغ به زودی')">گزارشات فروش مرغ</span>
+                    </div>
+                </div>
+                <!-- Dropdown محاسبات و نمودارها -->
+                <div class="dropdown">
+                    <button class="dropbtn">🧮 محاسبات و نمودارها</button>
+                    <div class="dropdown-content">
+                        <span onclick="openWaterVaccine()">محاسبه آب واکسن</span>
+                        <span onclick="openWaterCalc()">محاسبه مصرف آب</span>
+                        <span onclick="openConsumptionCalc()">محاسبه مصرف شده</span>
+                        <span onclick="openMortalityChart()">نمودار تلفات</span>
+                        <span onclick="openMoreCalculations()">محاسبات تکمیلی</span>
+                    </div>
+                </div>
+                <!-- سایر آیتم‌ها -->
+                <span class="nav-item" onclick="openFanCalculator()">🌀 تنظیم دور فن</span>
+                <span class="nav-item" onclick="openSettings()">🐣 ورود جوجه</span>
+                <span class="nav-item" onclick="openReportsModal()">📊 گزارشات</span>
             </div>
             <div class="profile">
-                <span>مدیر سیستم</span>
+                <span>مدیر مرغداری</span>
                 <div class="avatar">م</div>
             </div>
         </div>
@@ -31,107 +49,151 @@
         <!-- ردیف ۲: مصرف دان و ضریب تبدیل -->
         <div class="row-2">
             <div class="metric-card">
-                <div class="metric-info">
-                    <h3>🌾 مصرف دان</h3>
-                    <div class="value" id="feedConsumption">۷۴۸</div>
-                    <div class="metric-unit">کیلوگرم</div>
-                </div>
+                <div class="metric-info"><h3>🌾 مصرف دان</h3><div class="value" id="totalFeed">۰</div><div>کیلوگرم</div></div>
                 <div class="metric-icon">📊</div>
             </div>
             <div class="metric-card">
-                <div class="metric-info">
-                    <h3>📈 ضریب تبدیل</h3>
-                    <div class="value" id="conversionRate">۱.۸۵</div>
-                    <div class="metric-unit">kg/kg</div>
-                </div>
+                <div class="metric-info"><h3>📈 ضریب تبدیل</h3><div class="value" id="conversionRate">۰</div><div>kg/kg</div></div>
                 <div class="metric-icon">🔄</div>
-            </div>
-        </div>
-
-        <!-- ردیف ۳: گزارش روزانه و محاسبات -->
-        <div class="row-3">
-            <div class="action-card" onclick="openDailyReport()">
-                <div class="action-icon">📋</div>
-                <div class="action-text">
-                    <h4>گزارش روزانه</h4>
-                    <p>ثبت گزارش جدید</p>
-                </div>
-            </div>
-            <div class="action-card" onclick="openWaterVaccine()">
-                <div class="action-icon">💉</div>
-                <div class="action-text">
-                    <h4>محاسبه آب واکسن</h4>
-                    <p>مقدار آب مورد نیاز</p>
-                </div>
-            </div>
-            <div class="action-card" onclick="openWaterCalc()">
-                <div class="action-icon">💧</div>
-                <div class="action-text">
-                    <h4>محاسبه مصرف آب</h4>
-                    <p>مصرف روزانه</p>
-                </div>
-            </div>
-            <div class="action-card" onclick="openConsumptionCalc()">
-                <div class="action-icon">🧮</div>
-                <div class="action-text">
-                    <h4>محاسبه مصرف شده</h4>
-                    <p>دان و آب مصرف شده</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ردیف ۴: نمودار تلفات و محاسبات بیشتر -->
-        <div class="row-4">
-            <div class="settings-card" onclick="openMortalityChart()">
-                <div class="settings-icon">📉</div>
-                <div class="action-text">
-                    <h4>نمودار تلفات</h4>
-                    <p>نمایش گرافیکی</p>
-                </div>
-            </div>
-            <div class="settings-card" onclick="openMoreCalculations()">
-                <div class="settings-icon">📊</div>
-                <div class="action-text">
-                    <h4>محاسبات تکمیلی</h4>
-                    <p>گزارشات تحلیلی</p>
-                </div>
             </div>
         </div>
 
         <!-- ردیف ۵: نمودارها -->
         <div class="row-5">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>📊 نمودار میانگین وزن</h3>
-                    <span>۷ روز اخیر</span>
-                </div>
-                <div class="chart-placeholder" id="weightChart"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>📉 نمودار تلفات</h3>
-                    <span>۷ روز اخیر</span>
-                </div>
-                <div class="chart-placeholder" id="mortalityChart"></div>
-            </div>
+            <div class="chart-card"><div class="chart-header"><h3>📊 نمودار میانگین وزن</h3><span>۷ روز اخیر</span></div><div class="chart-placeholder">[نمودار میانگین وزن]</div></div>
+            <div class="chart-card"><div class="chart-header"><h3>📉 نمودار تلفات</h3><span>۷ روز اخیر</span></div><div class="chart-placeholder">[نمودار تلفات]</div></div>
         </div>
     </div>
 
-    <!-- مودال تنظیمات -->
+    <!-- مودال ورود جوجه -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>⚙️ تنظیمات</h2>
-                <button class="close-btn" onclick="closeSettingsModal()">×</button>
-            </div>
+            <div class="modal-header"><h2>🐣 ورود جوجه</h2><button class="close-btn" onclick="closeSettingsModal()">×</button></div>
             <div id="hallsEditContainer"></div>
-            <button class="add-hall-btn" onclick="addNewHall()">
-                <span>+</span> افزودن سالن جدید
-            </button>
+            <button class="add-hall-btn" onclick="addNewHall()"><span>+</span> افزودن سالن جدید</button>
             <div class="modal-actions">
                 <button class="modal-btn primary" onclick="saveHallChanges()">ذخیره تغییرات</button>
                 <button class="modal-btn secondary" onclick="closeSettingsModal()">انصراف</button>
             </div>
+        </div>
+    </div>
+
+    <!-- مودال تنظیم دور فن -->
+    <div class="modal" id="fanModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🌀 ماشین حساب دور فن</h2>
+                <button class="close-btn" onclick="closeFanModal()">×</button>
+            </div>
+            <div class="calc-container">
+                <div class="calc-title">⚙️ پارامترهای ورودی</div>
+                <div class="calc-grid">
+                    <label>سن جوجه (روز):</label>
+                    <input type="number" id="calcAge" value="20" min="0">
+                </div>
+                <div class="calc-grid">
+                    <label>دمای داخل سالن (°C):</label>
+                    <input type="number" id="calcTemp" value="28" min="0" max="50">
+                </div>
+                <div class="calc-grid">
+                    <label>رطوبت نسبی (%):</label>
+                    <input type="number" id="calcHumidity" value="60" min="0" max="100">
+                </div>
+                <div class="calc-grid">
+                    <label>وزن متوسط جوجه (گرم):</label>
+                    <input type="number" id="calcWeight" value="800" min="0">
+                </div>
+                <div class="calc-grid">
+                    <label>نوع فن:</label>
+                    <select id="calcFanType">
+                        <option value="axial">محوری (Axial)</option>
+                        <option value="centrifugal">سانتریفیوژ (Centrifugal)</option>
+                    </select>
+                </div>
+                <div class="calc-grid">
+                    <label>حداکثر دور فن (RPM):</label>
+                    <input type="number" id="calcMaxRPM" value="3000" min="100" max="10000">
+                </div>
+                <div class="calc-grid">
+                    <label>فرکانس شبکه (Hz):</label>
+                    <input type="number" id="calcFreq" value="50" min="50" max="60">
+                </div>
+                <button class="calc-btn" onclick="calculateFanSpeed()">محاسبه دور پیشنهادی</button>
+                <div class="calc-result" id="calcResult">
+                    <div class="label">دور پیشنهادی:</div>
+                    <div class="value" id="suggestedRPM">۱۴۰۰</div>
+                    <div class="unit">RPM</div>
+                    <div class="hz-value" id="suggestedFrequency">(معادل ۲۳.۳ Hz در اینورتر)</div>
+                </div>
+                <div class="calc-note">
+                    <strong>فرمول محاسبه:</strong> دور پایه ۱۰۰۰ + (سن × ۱۰) + (هر درجه بالای ۲۵، +۲۰) + (هر ۱۰٪ رطوبت بالای ۷۰، +۵۰) + (هر ۱۰۰ گرم بالای ۱۰۰۰ گرم، +۳۰) × ضریب نوع فن (محوری ۱, سانتریفیوژ ۱.۲). سپس محدود به حداکثر دور.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال نمایش گزارشات ثبت شده -->
+    <div class="modal" id="reportsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 گزارشات ثبت‌شده</h2>
+                <button class="close-btn" onclick="closeReportsModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label>انتخاب سالن:</label>
+                <select id="modalReportHallSelect" onchange="loadReportsIntoModal(this.value)">
+                    <!-- توسط js پر می‌شود -->
+                </select>
+            </div>
+            <div class="reports-modal-summary" id="modalSummary">
+                <!-- خلاصه آماری -->
+            </div>
+            <div class="reports-list" id="modalReportsList" style="max-height: 300px;">
+                <!-- لیست گزارشات -->
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال گزارش روزانه -->
+    <div class="modal" id="dailyReportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 گزارش روزانه</h2>
+                <button class="close-btn" onclick="closeDailyReportModal()">×</button>
+            </div>
+            <div class="daily-report-form">
+                <div class="info-message">📌 لطفاً اطلاعات امروز را وارد کنید. سن بر اساس تعداد گزارش‌های ثبت‌شده محاسبه می‌شود.</div>
+                
+                <div class="form-group">
+                    <label>انتخاب سالن:</label>
+                    <select id="modalDailyHallSelect" onchange="updateModalAgeDisplay(); renderModalReportsList();">
+                        <!-- توسط js پر می‌شود -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>سن جوجه (روز):</label>
+                    <div class="calculated-age" id="modalCalculatedAgeDisplay">0</div>
+                </div>
+
+                <div class="form-group">
+                    <label>تعداد تلفات امروز:</label>
+                    <input type="number" id="modalMortalityInput" min="0" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>مصرف دان امروز (کیلوگرم):</label>
+                    <input type="number" id="modalFeedInput" min="0" value="0">
+                </div>
+
+                <div class="form-group" id="modalWeightGroup" style="display: none;">
+                    <label>میانگین وزن امروز (گرم):</label>
+                    <input type="number" id="modalWeightInput" min="0">
+                </div>
+
+                <button class="submit-btn" onclick="submitModalDailyReport()">ثبت گزارش روزانه</button>
+            </div>
+            <div id="modalReportsListContainer"></div>
         </div>
     </div>
 
