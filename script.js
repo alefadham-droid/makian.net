@@ -1,248 +1,342 @@
-// داده‌های سالن‌ها
+// داده‌های سالن‌ها با یک سالن پیش‌فرض
 let halls = [
-    { id: 1, name: 'سالن ۱', count: 5240, breed: 'راس 308', age: 35 },
-    { id: 2, name: 'سالن ۲', count: 3938, breed: 'کاب 500', age: 28 },
-    { id: 3, name: 'سالن ۳', count: 2850, breed: 'راس 308', age: 21 },
-    { id: 4, name: 'سالن ۴', count: 1920, breed: 'پلاس', age: 14 }
+    { 
+        id: 1, 
+        name: 'سالن ۱', 
+        initialCount: 10000, 
+        count: 10000, 
+        breed: 'راس 308', 
+        entryDate: '1404/4/12',
+        dailyReports: [] 
+    }
 ];
 
-// داده‌های نمودار
-let weightData = [2450, 2500, 2600, 2680, 2750, 2820, 2900];
-let mortalityData = [12, 8, 15, 10, 7, 9, 11];
+// تابع تبدیل تاریخ میلادی به شمسی با ساعت و دقیقه
+function toJalaliWithTime(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
+    let jalaliYear = year - 621;
+    let jalaliMonth = month;
+    let jalaliDay = day;
+    return `${jalaliYear}/${jalaliMonth.toString().padStart(2, '0')}/${jalaliDay.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
 
-// نمایش اولیه
-document.addEventListener('DOMContentLoaded', function() {
+// به‌روزرسانی متریک‌های اصلی
+function updateMainMetrics() {
+    let totalFeed = 0;
+    halls.forEach(hall => {
+        totalFeed += hall.dailyReports.reduce((sum, r) => sum + r.feed, 0);
+    });
+    document.getElementById('totalFeed').innerText = totalFeed.toLocaleString();
+
+    let totalWeight = 0;
+    let birdCount = 0;
+    halls.forEach(hall => {
+        const lastWeightReport = [...hall.dailyReports].reverse().find(r => r.weight);
+        if (lastWeightReport && hall.count > 0) {
+            totalWeight += lastWeightReport.weight * hall.count;
+            birdCount += hall.count;
+        }
+    });
+    let conversion = 0;
+    if (totalWeight > 0) {
+        conversion = totalFeed / (totalWeight / 1000);
+    }
+    document.getElementById('conversionRate').innerText = conversion.toFixed(2);
+
     updateHallsDisplay();
-    renderCharts();
-});
-
-// توابع تنظیمات
-function openSettings() {
-    renderHallsEdit();
-    document.getElementById('settingsModal').classList.add('active');
 }
 
-function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.remove('active');
+function updateHallsDisplay() {
+    const row = document.getElementById('hallsRow');
+    row.innerHTML = '';
+    halls.forEach(hall => {
+        row.innerHTML += `
+            <div class="card hall-card" data-hall-id="${hall.id}">
+                <div class="hall-badge">${hall.name}</div>
+                <div class="card-title">🏭 موجودی</div>
+                <div class="card-value">${hall.count.toLocaleString()}</div>
+                <div class="card-sub">قطعه</div>
+                <div class="card-sub" style="margin-top:5px; color:#2d5a9b;">ورود: ${hall.entryDate}</div>
+            </div>
+        `;
+    });
 }
 
-// نمایش فرم ویرایش سالن‌ها
+// مودال ورود جوجه
+function openSettings() { renderHallsEdit(); document.getElementById('settingsModal').classList.add('active'); }
+function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
 function renderHallsEdit() {
     const container = document.getElementById('hallsEditContainer');
-    if (!container) return;
-    
     container.innerHTML = '';
-
     halls.forEach((hall) => {
         const hallDiv = document.createElement('div');
         hallDiv.className = 'hall-edit-item';
         hallDiv.innerHTML = `
-            <div class="hall-edit-header">
-                <h3>${hall.name}</h3>
-                <span class="hall-id">شناسه: ${hall.id}</span>
-            </div>
-            <div class="hall-edit-row">
-                <label>نام سالن:</label>
-                <input type="text" class="hall-name-input" data-id="${hall.id}" value="${hall.name}">
-            </div>
-            <div class="hall-edit-row">
-                <label>تعداد جوجه:</label>
-                <input type="number" class="hall-count-input" data-id="${hall.id}" value="${hall.count}">
-            </div>
-            <div class="hall-edit-row">
-                <label>نژاد:</label>
+            <div class="hall-edit-header"><h3>${hall.name}</h3><span>شناسه: ${hall.id}</span></div>
+            <div class="hall-edit-row"><label>نام سالن:</label><input type="text" class="hall-name-input" data-id="${hall.id}" value="${hall.name}"></div>
+            <div class="hall-edit-row"><label>تعداد جوجه (اولیه):</label><input type="number" class="hall-initial-count-input" data-id="${hall.id}" value="${hall.initialCount}"></div>
+            <div class="hall-edit-row"><label>نژاد:</label>
                 <select class="hall-breed-input" data-id="${hall.id}">
+                    <option value="انتخاب نژاد" ${hall.breed === 'انتخاب نژاد' ? 'selected' : ''}>انتخاب نژاد</option>
                     <option value="راس 308" ${hall.breed === 'راس 308' ? 'selected' : ''}>راس 308</option>
                     <option value="کاب 500" ${hall.breed === 'کاب 500' ? 'selected' : ''}>کاب 500</option>
                     <option value="پلاس" ${hall.breed === 'پلاس' ? 'selected' : ''}>پلاس</option>
                     <option value="آرین" ${hall.breed === 'آرین' ? 'selected' : ''}>آرین</option>
                 </select>
             </div>
-            <div class="hall-edit-row">
-                <label>سن (روز):</label>
-                <input type="number" class="hall-age-input" data-id="${hall.id}" value="${hall.age}">
-            </div>
+            <div class="hall-edit-row"><label style="color:#dc3545;">تاریخ ورود جوجه:</label><input type="text" class="hall-entrydate-input" data-id="${hall.id}" value="${hall.entryDate}" placeholder="مثال: 1404/4/12" style="border-color:#dc3545;"></div>
             <button class="delete-btn" onclick="deleteHall(${hall.id})">حذف سالن</button>
         `;
         container.appendChild(hallDiv);
     });
 }
 
-// افزودن سالن جدید
 function addNewHall() {
     const newId = halls.length > 0 ? Math.max(...halls.map(h => h.id)) + 1 : 1;
-    halls.push({
-        id: newId,
-        name: `سالن ${newId}`,
-        count: 1000,
-        breed: 'راس 308',
-        age: 1
+    halls.push({ 
+        id: newId, 
+        name: `سالن ${newId}`, 
+        initialCount: 0, 
+        count: 0, 
+        breed: 'انتخاب نژاد', 
+        entryDate: 'ثبت نشده',
+        dailyReports: []
     });
     renderHallsEdit();
 }
 
-// حذف سالن
 function deleteHall(id) {
-    if (halls.length <= 1) {
-        alert('حداقل باید یک سالن وجود داشته باشد');
-        return;
-    }
-    
+    if (halls.length <= 1) { alert('حداقل باید یک سالن وجود داشته باشد'); return; }
     if (confirm('آیا از حذف این سالن اطمینان دارید؟')) {
         halls = halls.filter(h => h.id !== id);
         renderHallsEdit();
         updateHallsDisplay();
+        updateMainMetrics();
     }
 }
 
-// ذخیره تغییرات
 function saveHallChanges() {
-    const nameInputs = document.querySelectorAll('.hall-name-input');
-    const countInputs = document.querySelectorAll('.hall-count-input');
-    const breedInputs = document.querySelectorAll('.hall-breed-input');
-    const ageInputs = document.querySelectorAll('.hall-age-input');
-
-    nameInputs.forEach(input => {
-        const id = parseInt(input.dataset.id);
-        const hall = halls.find(h => h.id === id);
-        if (hall) hall.name = input.value;
+    document.querySelectorAll('.hall-name-input').forEach(inp => {
+        const id = parseInt(inp.dataset.id); const hall = halls.find(h => h.id === id); if(hall) hall.name = inp.value;
+    });
+    document.querySelectorAll('.hall-initial-count-input').forEach(inp => {
+        const id = parseInt(inp.dataset.id); const hall = halls.find(h => h.id === id); if(hall) hall.initialCount = parseInt(inp.value) || 0;
+    });
+    document.querySelectorAll('.hall-breed-input').forEach(inp => {
+        const id = parseInt(inp.dataset.id); const hall = halls.find(h => h.id === id); if(hall) hall.breed = inp.value;
+    });
+    document.querySelectorAll('.hall-entrydate-input').forEach(inp => {
+        const id = parseInt(inp.dataset.id); const hall = halls.find(h => h.id === id); if(hall) hall.entryDate = inp.value;
     });
 
-    countInputs.forEach(input => {
-        const id = parseInt(input.dataset.id);
-        const hall = halls.find(h => h.id === id);
-        if (hall) hall.count = parseInt(input.value) || 0;
-    });
-
-    breedInputs.forEach(input => {
-        const id = parseInt(input.dataset.id);
-        const hall = halls.find(h => h.id === id);
-        if (hall) hall.breed = input.value;
-    });
-
-    ageInputs.forEach(input => {
-        const id = parseInt(input.dataset.id);
-        const hall = halls.find(h => h.id === id);
-        if (hall) hall.age = parseInt(input.value) || 0;
+    halls.forEach(hall => {
+        const totalMortality = hall.dailyReports.reduce((sum, r) => sum + r.mortality, 0);
+        hall.count = hall.initialCount - totalMortality;
+        if (hall.count < 0) hall.count = 0;
     });
 
     updateHallsDisplay();
+    updateMainMetrics();
     closeSettingsModal();
-    alert('✅ تغییرات با موفقیت ذخیره شد');
+    alert('✅ تغییرات ذخیره شد');
 }
 
-// به‌روزرسانی نمایش سالن‌ها
-function updateHallsDisplay() {
-    const row = document.getElementById('hallsRow');
-    if (!row) return;
-    
-    row.innerHTML = '';
+// مودال تنظیم دور فن
+function openFanCalculator() { 
+    document.getElementById('fanModal').classList.add('active');
+    calculateFanSpeed();
+}
+function closeFanModal() { document.getElementById('fanModal').classList.remove('active'); }
 
-    halls.forEach((hall) => {
-        const hallCard = document.createElement('div');
-        hallCard.className = 'card hall-card';
-        hallCard.innerHTML = `
-            <div class="hall-badge">${hall.name}</div>
-            <div class="card-title">🏭 موجودی</div>
-            <div class="card-value">${hall.count.toLocaleString()}</div>
-            <div class="card-sub">قطعه</div>
-        `;
-        row.appendChild(hallCard);
+function calculateFanSpeed() {
+    const age = parseFloat(document.getElementById('calcAge').value) || 0;
+    const temp = parseFloat(document.getElementById('calcTemp').value) || 25;
+    const humidity = parseFloat(document.getElementById('calcHumidity').value) || 60;
+    const weight = parseFloat(document.getElementById('calcWeight').value) || 800;
+    const fanType = document.getElementById('calcFanType').value;
+    const maxRPM = parseFloat(document.getElementById('calcMaxRPM').value) || 3000;
+    const freq = parseFloat(document.getElementById('calcFreq').value) || 50;
+
+    let speed = 1000;
+    speed += age * 10;
+    if (temp > 25) speed += (temp - 25) * 20;
+    else if (temp < 20) speed -= (20 - temp) * 10;
+    if (humidity > 70) speed += Math.floor((humidity - 70) / 10) * 50;
+    if (weight > 1000) speed += Math.floor((weight - 1000) / 100) * 30;
+    if (fanType === 'centrifugal') speed *= 1.2;
+    speed = Math.min(maxRPM, Math.max(500, Math.round(speed)));
+
+    document.getElementById('suggestedRPM').innerText = speed;
+    const equivalentFreq = (speed / maxRPM) * freq;
+    document.getElementById('suggestedFrequency').innerText = `(معادل ${equivalentFreq.toFixed(1)} Hz در اینورتر)`;
+}
+
+// توابع placeholder
+function openWaterVaccine() { alert('محاسبه آب واکسن'); }
+function openWaterCalc() { alert('محاسبه مصرف آب'); }
+function openConsumptionCalc() { alert('محاسبه مصرف شده'); }
+function openMortalityChart() { alert('نمودار تلفات'); }
+function openMoreCalculations() { alert('محاسبات تکمیلی'); }
+
+// مودال نمایش گزارشات
+function openReportsModal() {
+    const modal = document.getElementById('reportsModal');
+    const select = document.getElementById('modalReportHallSelect');
+    select.innerHTML = '';
+    halls.forEach(hall => {
+        const option = document.createElement('option');
+        option.value = hall.id;
+        option.textContent = hall.name;
+        select.appendChild(option);
     });
+    loadReportsIntoModal(halls[0].id);
+    modal.classList.add('active');
 }
+function closeReportsModal() { document.getElementById('reportsModal').classList.remove('active'); }
 
-// توابع گزارش‌گیری
-function openDailyReport() {
-    alert('📋 فرم گزارش روزانه باز می‌شود');
-}
+function loadReportsIntoModal(hallId) {
+    const hall = halls.find(h => h.id == hallId);
+    if (!hall) return;
 
-function openWaterVaccine() {
-    const totalBirds = halls.reduce((sum, hall) => sum + hall.count, 0);
-    const waterNeeded = Math.ceil(totalBirds / 1000) * 1.2; // 1.2 لیتر به ازای هر 1000 پرنده
-    alert(`💉 برای ${totalBirds.toLocaleString()} پرنده، حدود ${waterNeeded} لیتر آب برای واکسیناسیون نیاز است`);
-}
+    const totalMortality = hall.dailyReports.reduce((sum, r) => sum + r.mortality, 0);
+    const totalFeed = hall.dailyReports.reduce((sum, r) => sum + r.feed, 0);
+    const summaryDiv = document.getElementById('modalSummary');
+    summaryDiv.innerHTML = `
+        <div class="summary-item"><span class="label">🐔 موجودی فعلی</span><span class="value">${hall.count.toLocaleString()}</span></div>
+        <div class="summary-item"><span class="label">💀 مجموع تلفات</span><span class="value">${totalMortality}</span></div>
+        <div class="summary-item"><span class="label">🌾 مجموع مصرف دان</span><span class="value">${totalFeed} kg</span></div>
+    `;
 
-function openWaterCalc() {
-    const totalBirds = halls.reduce((sum, hall) => sum + hall.count, 0);
-    const dailyWater = totalBirds * 0.27; // 270 میلی‌لیتر به ازای هر پرنده
-    alert(`💧 مصرف آب روزانه: ${Math.round(dailyWater / 1000)} لیتر`);
-}
-
-function openConsumptionCalc() {
-    const totalBirds = halls.reduce((sum, hall) => sum + hall.count, 0);
-    const feedPerBird = 0.12; // کیلوگرم
-    const totalFeed = totalBirds * feedPerBird;
-    alert(`🧮 مصرف دان روزانه: ${Math.round(totalFeed)} کیلوگرم`);
-}
-
-function openMortalityChart() {
-    renderCharts();
-}
-
-function openMoreCalculations() {
-    alert('📊 محاسبات تکمیلی در حال توسعه');
-}
-
-// نمودارها
-function renderCharts() {
-    const weightChart = document.getElementById('weightChart');
-    const mortalityChart = document.getElementById('mortalityChart');
-    
-    if (weightChart) {
-        weightChart.innerHTML = renderWeightChart();
+    const listDiv = document.getElementById('modalReportsList');
+    let html = '<h4>📋 گزارش‌های ثبت‌شده</h4>';
+    if (hall.dailyReports.length === 0) {
+        html += '<div class="no-reports">هیچ گزارشی ثبت نشده است</div>';
+    } else {
+        const sorted = [...hall.dailyReports].sort((a, b) => (a.date > b.date ? -1 : 1));
+        sorted.forEach(report => {
+            html += `<div class="report-item">
+                <span class="report-date">${report.date}</span>
+                <span class="report-details">📉 تلفات: ${report.mortality} | 🌾 دان: ${report.feed} کیلوگرم ${report.weight ? '| ⚖️ وزن: ' + report.weight + ' گرم' : ''}</span>
+            </div>`;
+        });
     }
-    
-    if (mortalityChart) {
-        mortalityChart.innerHTML = renderMortalityChart();
+    listDiv.innerHTML = html;
+}
+
+// مودال گزارش روزانه
+function openDailyReportModal() {
+    const modal = document.getElementById('dailyReportModal');
+    const select = document.getElementById('modalDailyHallSelect');
+    select.innerHTML = '';
+    halls.forEach(hall => {
+        const option = document.createElement('option');
+        option.value = hall.id;
+        option.textContent = hall.name;
+        select.appendChild(option);
+    });
+    updateModalAgeDisplay();
+    renderModalReportsList();
+    modal.classList.add('active');
+}
+function closeDailyReportModal() { document.getElementById('dailyReportModal').classList.remove('active'); }
+
+function getSelectedModalHallId() {
+    const select = document.getElementById('modalDailyHallSelect');
+    return select ? parseInt(select.value) : null;
+}
+
+function updateModalAgeDisplay() {
+    const hallId = getSelectedModalHallId();
+    if (!hallId) return;
+    const hall = halls.find(h => h.id === hallId);
+    const age = hall.dailyReports.length + 1;
+    const ageDisplay = document.getElementById('modalCalculatedAgeDisplay');
+    if (ageDisplay) ageDisplay.innerText = age;
+
+    const weightGroup = document.getElementById('modalWeightGroup');
+    if (weightGroup) {
+        if (age > 0 && age % 7 === 0) {
+            weightGroup.style.display = 'block';
+        } else {
+            weightGroup.style.display = 'none';
+        }
     }
 }
 
-function renderWeightChart() {
-    const maxWeight = Math.max(...weightData);
-    
-    let chartHTML = '<div style="display: flex; align-items: flex-end; gap: 10px; height: 180px;">';
-    
-    weightData.forEach(weight => {
-        const height = (weight / maxWeight) * 150;
-        chartHTML += `<div style="flex: 1; background: #2d5a9b; height: ${height}px; border-radius: 10px 10px 0 0;"></div>`;
-    });
-    
-    chartHTML += '</div><div style="display: flex; gap: 10px; margin-top: 10px;">';
-    
-    const days = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
-    days.forEach(day => {
-        chartHTML += `<span style="flex: 1; text-align: center; color: #999; font-size: 12px;">${day}</span>`;
-    });
-    
-    chartHTML += '</div>';
-    return chartHTML;
+function renderModalReportsList() {
+    const hallId = getSelectedModalHallId();
+    if (!hallId) return;
+    const hall = halls.find(h => h.id === hallId);
+    const container = document.getElementById('modalReportsListContainer');
+    if (!container) return;
+
+    let html = '<div class="reports-list"><h4>📋 گزارش‌های ثبت‌شده</h4>';
+    if (hall.dailyReports.length === 0) {
+        html += '<div class="no-reports">هیچ گزارشی ثبت نشده است</div>';
+    } else {
+        const sorted = [...hall.dailyReports].sort((a, b) => (a.date > b.date ? -1 : 1));
+        sorted.forEach(report => {
+            html += `<div class="report-item">
+                <span class="report-date">${report.date}</span>
+                <span class="report-details">📉 تلفات: ${report.mortality} | 🌾 دان: ${report.feed} کیلوگرم ${report.weight ? '| ⚖️ وزن: ' + report.weight + ' گرم' : ''}</span>
+            </div>`;
+        });
+    }
+    html += '</div>';
+    container.innerHTML = html;
 }
 
-function renderMortalityChart() {
-    const maxMortality = Math.max(...mortalityData);
-    
-    let chartHTML = '<div style="display: flex; align-items: flex-end; gap: 10px; height: 180px;">';
-    
-    mortalityData.forEach(mortality => {
-        const height = (mortality / maxMortality) * 150;
-        chartHTML += `<div style="flex: 1; background: #dc3545; height: ${height}px; border-radius: 10px 10px 0 0;"></div>`;
+function submitModalDailyReport() {
+    const hallId = getSelectedModalHallId();
+    if (!hallId) return;
+    const hall = halls.find(h => h.id === hallId);
+    const mortality = parseInt(document.getElementById('modalMortalityInput').value) || 0;
+    const feed = parseInt(document.getElementById('modalFeedInput').value) || 0;
+    const weightInput = document.getElementById('modalWeightInput');
+    const weight = weightInput && weightInput.style.display !== 'none' ? parseInt(weightInput.value) : null;
+
+    const todayJalali = toJalaliWithTime(new Date());
+
+    hall.dailyReports.push({
+        date: todayJalali,
+        mortality: mortality,
+        feed: feed,
+        weight: weight
     });
-    
-    chartHTML += '</div><div style="display: flex; gap: 10px; margin-top: 10px;">';
-    
-    const days = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
-    days.forEach(day => {
-        chartHTML += `<span style="flex: 1; text-align: center; color: #999; font-size: 12px;">${day}</span>`;
-    });
-    
-    chartHTML += '</div>';
-    return chartHTML;
+
+    const totalMortality = hall.dailyReports.reduce((sum, r) => sum + r.mortality, 0);
+    hall.count = hall.initialCount - totalMortality;
+    if (hall.count < 0) hall.count = 0;
+
+    updateMainMetrics();
+
+    alert('✅ گزارش روزانه ثبت شد');
+    document.getElementById('modalMortalityInput').value = 0;
+    document.getElementById('modalFeedInput').value = 0;
+    if (weightInput) weightInput.value = '';
+    updateModalAgeDisplay();
+    renderModalReportsList();
+
+    const reportsModal = document.getElementById('reportsModal');
+    if (reportsModal.classList.contains('active')) {
+        const select = document.getElementById('modalReportHallSelect');
+        if (select) loadReportsIntoModal(select.value);
+    }
 }
 
-// بستن مودال با کلیک خارج
+// بستن مودال با کلیک بیرون
 window.onclick = function(event) {
-    const modal = document.getElementById('settingsModal');
-    if (event.target == modal) {
-        modal.classList.remove('active');
+    if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('active');
     }
 }
+
+// مقداردهی اولیه
+updateHallsDisplay();
+updateMainMetrics();
