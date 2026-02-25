@@ -25,7 +25,90 @@ function toJalaliWithTime(date) {
     return `${jalaliYear}/${jalaliMonth.toString().padStart(2, '0')}/${jalaliDay.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
-// به‌روزرسانی متریک‌های اصلی
+// ==================== مدیریت احراز هویت ====================
+function checkAuth() {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+        document.getElementById('authContainer').classList.add('hidden');
+        document.getElementById('dashboardContainer').classList.remove('hidden');
+        const user = JSON.parse(loggedInUser);
+        document.getElementById('profileName').innerText = user.firstName + ' ' + user.lastName;
+        updateHallsDisplay();
+        updateMainMetrics();
+    } else {
+        document.getElementById('authContainer').classList.remove('hidden');
+        document.getElementById('dashboardContainer').classList.add('hidden');
+    }
+}
+
+function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    if (tab === 'login') {
+        document.querySelector('.auth-tab').classList.add('active');
+        document.getElementById('loginForm').classList.add('active');
+    } else {
+        document.querySelectorAll('.auth-tab')[1].classList.add('active');
+        document.getElementById('signupForm').classList.add('active');
+    }
+}
+
+function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    if (!username || !password) {
+        alert('لطفاً نام کاربری و رمز عبور را وارد کنید');
+        return;
+    }
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.phone === username && u.password === password);
+    if (user) {
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        checkAuth();
+    } else {
+        alert('کاربری با این مشخصات یافت نشد. لطفاً ثبت‌نام کنید.');
+    }
+}
+
+function handleSignup() {
+    const firstName = document.getElementById('signupFirstName').value.trim();
+    const lastName = document.getElementById('signupLastName').value.trim();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const province = document.getElementById('signupProvince').value;
+    const city = document.getElementById('signupCity').value.trim();
+
+    if (!firstName || !lastName || !phone || !province || !city) {
+        alert('لطفاً تمام فیلدها را پر کنید');
+        return;
+    }
+    const password = phone;
+
+    const newUser = {
+        firstName,
+        lastName,
+        phone,
+        province,
+        city,
+        password
+    };
+
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if (users.find(u => u.phone === phone)) {
+        alert('این شماره تماس قبلاً ثبت‌نام شده است');
+        return;
+    }
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('loggedInUser', JSON.stringify(newUser));
+    checkAuth();
+}
+
+function logout() {
+    localStorage.removeItem('loggedInUser');
+    checkAuth();
+}
+
+// ==================== توابع اصلی داشبورد ====================
 function updateMainMetrics() {
     let totalFeed = 0;
     halls.forEach(hall => {
@@ -337,6 +420,5 @@ window.onclick = function(event) {
     }
 }
 
-// مقداردهی اولیه
-updateHallsDisplay();
-updateMainMetrics();
+// اجرای اولیه
+checkAuth();
